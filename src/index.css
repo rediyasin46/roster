@@ -2,95 +2,108 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
-
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 0 0% 96%;
+    --foreground: 220 20% 10%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 220 20% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 220 20% 10%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 187 100% 42%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 220 20% 10%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 210 20% 94%;
+    --muted-foreground: 220 10% 40%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 45 100% 51%;
+    --accent-foreground: 220 20% 10%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --success: 142 70% 45%;
+    --success-foreground: 0 0% 100%;
 
-    --radius: 0.5rem;
+    --warning: 45 100% 51%;
+    --warning-foreground: 220 20% 10%;
+
+    --info: 210 100% 50%;
+    --info-foreground: 0 0% 100%;
+
+    --orange: 32 100% 50%;
+    --orange-foreground: 0 0% 100%;
+
+    --border: 220 13% 85%;
+    --input: 220 13% 85%;
+    --ring: 187 100% 42%;
+
+    --radius: 0.375rem;
+
+    /* Table specific colors */
+    --table-header: 210 100% 40%;
+    --table-header-foreground: 0 0% 100%;
+    --table-row-alt: 210 50% 95%;
+    --table-row-hover: 210 50% 90%;
+    --table-cell-edit: 45 100% 85%;
+    --table-calculated: 32 100% 50%;
+    --table-calculated-foreground: 0 0% 100%;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    --background: 220 20% 10%;
     --foreground: 210 40% 98%;
 
-    --card: 222.2 84% 4.9%;
+    --card: 220 20% 14%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 222.2 84% 4.9%;
+    --popover: 220 20% 14%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 187 100% 42%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 217.2 32.6% 17.5%;
+    --secondary: 220 20% 20%;
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 220 20% 20%;
+    --muted-foreground: 215 20% 65%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 45 100% 51%;
+    --accent-foreground: 220 20% 10%;
 
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 62% 30%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --success: 142 70% 35%;
+    --success-foreground: 0 0% 100%;
+
+    --border: 220 20% 25%;
+    --input: 220 20% 25%;
+    --ring: 187 100% 42%;
+
+    --table-header: 210 100% 30%;
+    --table-header-foreground: 0 0% 100%;
+    --table-row-alt: 220 20% 16%;
+    --table-row-hover: 220 20% 20%;
+    --table-cell-edit: 45 100% 25%;
+    --table-calculated: 32 100% 40%;
+    --table-calculated-foreground: 0 0% 100%;
   }
 }
 
@@ -101,5 +114,123 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   }
+}
+
+@layer components {
+  .markbook-header {
+    @apply bg-primary text-primary-foreground py-3 px-4 font-bold text-xl;
+  }
+
+  .markbook-table {
+    @apply w-full border-collapse text-sm;
+  }
+
+  .markbook-table th {
+    @apply bg-[hsl(var(--table-header))] text-[hsl(var(--table-header-foreground))] 
+           font-semibold text-center px-2 py-2 border border-border whitespace-nowrap;
+  }
+
+  .markbook-table td {
+    @apply px-2 py-1.5 border border-border text-center;
+  }
+
+  .markbook-table tr:nth-child(even) td {
+    @apply bg-[hsl(var(--table-row-alt))];
+  }
+
+  .markbook-table tr:hover td {
+    @apply bg-[hsl(var(--table-row-hover))];
+  }
+
+  .cell-editable {
+    @apply cursor-pointer hover:bg-[hsl(var(--table-cell-edit))] transition-colors;
+  }
+
+  .cell-editing {
+    @apply bg-[hsl(var(--table-cell-edit))] outline outline-2 outline-[hsl(var(--accent))];
+  }
+
+  .cell-calculated {
+    @apply bg-[hsl(var(--table-calculated))] text-[hsl(var(--table-calculated-foreground))] font-semibold;
+  }
+
+  .cell-average {
+    @apply bg-[hsl(45,100%,70%)] text-foreground font-semibold;
+  }
+
+  .cell-rank {
+    @apply bg-[hsl(var(--table-calculated))] text-[hsl(var(--table-calculated-foreground))] font-bold;
+  }
+
+  .btn-action {
+    @apply px-4 py-2 font-medium rounded transition-colors text-sm;
+  }
+
+  .btn-import {
+    @apply bg-[hsl(var(--success))] text-[hsl(var(--success-foreground))] hover:opacity-90;
+  }
+
+  .btn-export {
+    @apply bg-[hsl(var(--warning))] text-[hsl(var(--warning-foreground))] hover:opacity-90;
+  }
+
+  .btn-edit {
+    @apply bg-[hsl(var(--warning))] text-[hsl(var(--warning-foreground))] hover:opacity-90 px-2 py-1 text-xs;
+  }
+
+  .btn-delete {
+    @apply bg-[hsl(var(--destructive))] text-[hsl(var(--destructive-foreground))] hover:opacity-90 px-2 py-1 text-xs;
+  }
+
+  .info-grid {
+    @apply grid gap-2 text-sm;
+  }
+
+  .info-label {
+    @apply bg-muted px-3 py-1.5 font-medium border border-border;
+  }
+
+  .info-value {
+    @apply bg-[hsl(142,70%,85%)] px-3 py-1.5 border border-border;
+  }
+
+  .nav-icon {
+    @apply p-3 rounded-lg transition-all hover:scale-105;
+  }
+
+  .nav-icon-active {
+    @apply bg-primary text-primary-foreground shadow-lg;
+  }
+
+  .nav-icon-inactive {
+    @apply bg-muted text-muted-foreground hover:bg-primary/20;
+  }
+
+  .subject-tag {
+    @apply bg-[hsl(var(--success))] text-[hsl(var(--success-foreground))] px-4 py-2 font-bold rounded;
+  }
+
+  .score-toggle {
+    @apply bg-[hsl(210,50%,85%)] px-3 py-1.5 rounded border border-border;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-muted;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-muted-foreground/30 rounded;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-muted-foreground/50;
 }
