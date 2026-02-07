@@ -187,13 +187,14 @@ export default function Assessments() {
       const assessment = getStudentAssessment(student.id, selectedSubjectId!);
       const scores = assessment?.scores || Array(10).fill(0);
       const displayScores = scores.map(s => (s * displayMultiplier).toFixed(displayMultiplier === 1 ? 0 : 1));
-      const total = getStudentTotal(student.id, selectedSubjectId!) * displayMultiplier;
+      const rawTotal = getStudentTotal(student.id, selectedSubjectId!);
+      const total = rawTotal * 10; // Convert to 100% scale
       const rank = getStudentRank(student.id, selectedSubjectId!);
       return [student.rn, student.name, ...displayScores, total.toFixed(0), rank];
     });
   };
 
-  const tableHeaders = ['RN', 'Student Name', '1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th', '9th', '10th', 'Total', 'Rank', 'Action'];
+  const tableHeaders = ['RN', 'Student Name', '1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th', '9th', '10th', 'Total /100%', 'Rank', 'Action'];
 
   const handleStartEditStudent = (studentId: string, currentName: string) => {
     setEditingStudent(studentId);
@@ -305,7 +306,7 @@ export default function Assessments() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-card z-50">
-                <SelectItem value="10%">10% with 100%</SelectItem>
+                <SelectItem value="10%">1st-10th</SelectItem>
                 <SelectItem value="100%">100% only</SelectItem>
               </SelectContent>
             </Select>
@@ -363,7 +364,7 @@ export default function Assessments() {
                 <th>8th</th>
                 <th>9th</th>
                 <th>10th</th>
-                <th className="bg-[hsl(var(--table-calculated))]">Total</th>
+                <th className="bg-[hsl(var(--table-calculated))]">Total /100%</th>
                 <th className="bg-[hsl(var(--table-calculated))]">Rank</th>
                 <th>Action</th>
               </tr>
@@ -372,7 +373,8 @@ export default function Assessments() {
               {students.map(student => {
                 const assessment = getStudentAssessment(student.id, selectedSubjectId!);
                 const scores = assessment?.scores || Array(10).fill(0);
-                const total = getStudentTotal(student.id, selectedSubjectId!) * displayMultiplier;
+                const rawTotal = getStudentTotal(student.id, selectedSubjectId!);
+                const total = rawTotal * 10; // Convert to 100% scale (10 assessments × 10 points = 100)
                 const rank = getStudentRank(student.id, selectedSubjectId!);
 
                 return (
