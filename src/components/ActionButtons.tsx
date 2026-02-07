@@ -135,7 +135,7 @@ export function ActionButtons({
         Print
       </button>
       
-      <span className="text-muted-foreground text-sm self-center">(only for table)</span>
+      
     </div>
   );
 }
