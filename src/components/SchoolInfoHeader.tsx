@@ -1,22 +1,33 @@
 import { useMarkbook } from '@/context/MarkbookContext';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface SchoolInfoHeaderProps {
   showClass?: boolean;
   showSubjectCount?: boolean;
   showStudentCount?: boolean;
+  showSubjectDropdown?: boolean;
 }
 
 export function SchoolInfoHeader({ 
   showClass = false, 
   showSubjectCount = false,
-  showStudentCount = false 
+  showStudentCount = false,
+  showSubjectDropdown = false 
 }: SchoolInfoHeaderProps) {
-  const { state } = useMarkbook();
-  const { schoolInfo, subjects, students } = state;
+  const { state, dispatch } = useMarkbook();
+  const { schoolInfo, subjects, students, selectedSubjectId } = state;
+
+  const selectedSubject = subjects.find(s => s.id === selectedSubjectId);
 
   return (
     <div className="space-y-2">
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2 items-center">
         <div className="flex">
           <span className="info-label">School</span>
           <span className="info-value">{schoolInfo.school}</span>
@@ -33,6 +44,26 @@ export function SchoolInfoHeader({
           <span className="info-label">Year</span>
           <span className="info-value">{schoolInfo.year}</span>
         </div>
+        {showSubjectDropdown && (
+          <div className="flex items-center gap-2 ml-4">
+            <span className="info-label">Subject</span>
+            <Select
+              value={selectedSubjectId || ''}
+              onValueChange={(value) => dispatch({ type: 'SET_SELECTED_SUBJECT', payload: value })}
+            >
+              <SelectTrigger className="w-32 h-7 bg-[hsl(var(--success))] text-[hsl(var(--success-foreground))] text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-card z-50">
+                {subjects.map(subject => (
+                  <SelectItem key={subject.id} value={subject.id}>
+                    {subject.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
       </div>
       
       {(showClass || showSubjectCount || showStudentCount) && (

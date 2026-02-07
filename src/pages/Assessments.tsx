@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { Plus, Trash2, Edit2 } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { Plus, Trash2, Edit2, Upload } from 'lucide-react';
+import * as XLSX from 'xlsx';
 import { useMarkbook } from '@/context/MarkbookContext';
 import { Navigation } from '@/components/Navigation';
 import { ActionButtons } from '@/components/ActionButtons';
@@ -18,7 +19,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 
 export default function Assessments() {
@@ -29,24 +29,85 @@ export default function Assessments() {
   const [isAddSubjectOpen, setIsAddSubjectOpen] = useState(false);
   const [editingStudent, setEditingStudent] = useState<string | null>(null);
   const [editStudentName, setEditStudentName] = useState('');
+  const subjectFileInputRef = useRef<HTMLInputElement>(null);
 
   const selectedSubject = subjects.find(s => s.id === selectedSubjectId);
   const displayMultiplier = scoreDisplayMode === '10%' ? 1 : 10;
   const maxInputValue = scoreDisplayMode === '10%' ? 10 : 100;
 
-  const handleAddSubject = () => {
-    if (newSubjectName.trim()) {
+  // Get subjects that have scores (any student has non-zero scores)
+  const subjectsWithScores = subjects.filter(subject => {
+    return students.some(student => {
+      const assessment = getStudentAssessment(student.id, subject.id);
+      return assessment && assessment.scores.some(s => s > 0);
+    });
+  });
+
+  // Always show default subject (first one) plus subjects with scores
+  const availableSubjects = subjects.length > 0 
+    ? [subjects[0], ...subjectsWithScores.filter(s => s.id !== subjects[0].id)]
+    : [];
+
+  const handleSubjectFileImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !newSubjectName.trim()) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const data = new Uint8Array(event.target?.result as ArrayBuffer);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+      const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }) as any[][];
+
+      // Create new subject
+      const subjectId = newSubjectName.toLowerCase().replace(/\s+/g, '-') + '-' + Date.now();
       dispatch({
         type: 'ADD_SUBJECT',
         payload: {
-          id: newSubjectName.toLowerCase().replace(/\s+/g, '-'),
+          id: subjectId,
           name: newSubjectName.trim(),
           maxScore: 100,
         },
       });
+
+      // Parse the imported data - expecting RN and 10 scores
+      const rows = jsonData.slice(1); // Skip header
+      rows.forEach((row) => {
+        const rn = parseInt(row[0]);
+        if (isNaN(rn)) return;
+
+        const student = students.find(s => s.rn === rn);
+        if (student) {
+          const scores = row.slice(1, 11).map((v: any) => {
+            const num = parseFloat(v);
+            return isNaN(num) ? 0 : (scoreDisplayMode === '100%' ? num / 10 : num);
+          });
+
+          // Update assessment for this student and new subject
+          setTimeout(() => {
+            dispatch({
+              type: 'UPDATE_ASSESSMENT',
+              payload: {
+                studentId: student.id,
+                subjectId: subjectId,
+                scores: scores.length === 10 ? scores : [...scores, ...Array(10 - scores.length).fill(0)],
+              },
+            });
+          }, 100);
+        }
+      });
+
+      // Select the new subject
+      setTimeout(() => {
+        dispatch({ type: 'SET_SELECTED_SUBJECT', payload: subjectId });
+      }, 150);
+
       setNewSubjectName('');
       setIsAddSubjectOpen(false);
-    }
+    };
+    reader.readAsArrayBuffer(file);
+    e.target.value = '';
   };
 
   const handleAddStudent = () => {
@@ -79,7 +140,6 @@ export default function Assessments() {
   };
 
   const handleImport = (data: any[][]) => {
-    // Skip header row, process data
     const rows = data.slice(1);
     rows.forEach((row, index) => {
       const studentName = row[1] || '';
@@ -191,30 +251,6 @@ export default function Assessments() {
           </div>
         </div>
 
-        {/* Add Subject */}
-        <Dialog open={isAddSubjectOpen} onOpenChange={setIsAddSubjectOpen}>
-          <DialogTrigger asChild>
-            <Button variant="outline" size="sm" className="gap-2">
-              <Plus className="w-4 h-4" />
-              Add Subject
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="bg-card">
-            <DialogHeader>
-              <DialogTitle>Add New Subject</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <Input
-                placeholder="Subject Name"
-                value={newSubjectName}
-                onChange={(e) => setNewSubjectName(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleAddSubject()}
-              />
-              <Button onClick={handleAddSubject} className="w-full">Add Subject</Button>
-            </div>
-          </DialogContent>
-        </Dialog>
-
         {/* Action Buttons */}
         <ActionButtons
           showImport
@@ -227,20 +263,32 @@ export default function Assessments() {
         {/* Subject and Score Display Toggle */}
         <div className="flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium">Selected Subject:</span>
+            <span className="text-sm font-medium">Subject:</span>
             <Select
               value={selectedSubjectId || ''}
-              onValueChange={(value) => dispatch({ type: 'SET_SELECTED_SUBJECT', payload: value })}
+              onValueChange={(value) => {
+                if (value === 'add-subject') {
+                  setIsAddSubjectOpen(true);
+                } else {
+                  dispatch({ type: 'SET_SELECTED_SUBJECT', payload: value });
+                }
+              }}
             >
               <SelectTrigger className="w-40 bg-[hsl(var(--success))] text-[hsl(var(--success-foreground))]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-card z-50">
-                {subjects.map(subject => (
+                {availableSubjects.map(subject => (
                   <SelectItem key={subject.id} value={subject.id}>
                     {subject.name}
                   </SelectItem>
                 ))}
+                <SelectItem value="add-subject" className="text-primary font-medium">
+                  <span className="flex items-center gap-2">
+                    <Plus className="w-4 h-4" />
+                    Add Subject
+                  </span>
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -263,6 +311,40 @@ export default function Assessments() {
             </Select>
           </div>
         </div>
+
+        {/* Add Subject Dialog */}
+        <Dialog open={isAddSubjectOpen} onOpenChange={setIsAddSubjectOpen}>
+          <DialogContent className="bg-card">
+            <DialogHeader>
+              <DialogTitle>Import Subject Scores</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <Input
+                placeholder="Subject Name"
+                value={newSubjectName}
+                onChange={(e) => setNewSubjectName(e.target.value)}
+              />
+              <p className="text-sm text-muted-foreground">
+                Import an Excel/CSV file with columns: RN, 1st, 2nd, 3rd, ... 10th (scores by roll number)
+              </p>
+              <input
+                ref={subjectFileInputRef}
+                type="file"
+                accept=".xlsx,.xls,.csv"
+                onChange={handleSubjectFileImport}
+                className="hidden"
+              />
+              <Button 
+                onClick={() => subjectFileInputRef.current?.click()} 
+                className="w-full gap-2"
+                disabled={!newSubjectName.trim()}
+              >
+                <Upload className="w-4 h-4" />
+                Import Excel/CSV
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         {/* Data Table */}
         <div className="overflow-x-auto border rounded-lg">
