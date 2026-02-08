@@ -471,17 +471,21 @@ export default function Assessments() {
               <tr>
                 <th>RN</th>
                 <th>Student Name</th>
-                <th>1st</th>
-                <th>2nd</th>
-                <th>3rd</th>
-                <th>4th</th>
-                <th>5th</th>
-                <th>6th</th>
-                <th>7th</th>
-                <th>8th</th>
-                <th>9th</th>
-                <th>10th</th>
-                <th className="bg-[hsl(var(--table-calculated))]">Total /100%</th>
+                {scoreDisplayMode === '10%' && (
+                  <>
+                    <th>1st</th>
+                    <th>2nd</th>
+                    <th>3rd</th>
+                    <th>4th</th>
+                    <th>5th</th>
+                    <th>6th</th>
+                    <th>7th</th>
+                    <th>8th</th>
+                    <th>9th</th>
+                    <th>10th</th>
+                  </>
+                )}
+                <th className="bg-[hsl(var(--table-calculated))]">{selectedSubject?.name || 'Subject'} /100%</th>
                 <th className="bg-[hsl(var(--table-calculated))]">Rank</th>
                 <th>Action</th>
               </tr>
@@ -520,7 +524,7 @@ export default function Assessments() {
                         </span>
                       )}
                     </td>
-                    {scores.map((score, idx) => (
+                    {scoreDisplayMode === '10%' && scores.map((score, idx) => (
                       <EditableCell
                         key={idx}
                         value={score * displayMultiplier}
