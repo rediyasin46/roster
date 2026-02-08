@@ -6,6 +6,7 @@ import { Navigation } from '@/components/Navigation';
 import { ActionButtons } from '@/components/ActionButtons';
 import { EditableCell } from '@/components/EditableCell';
 import { Input } from '@/components/ui/input';
+import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -24,6 +25,7 @@ import {
 export default function Assessments() {
   const { state, dispatch, getStudentAssessment, getStudentTotal, getStudentRank } = useMarkbook();
   const { schoolInfo, students, subjects, selectedSubjectId, scoreDisplayMode } = state;
+  const { toast } = useToast();
   
   const [newSubjectName, setNewSubjectName] = useState('');
   const [isAddSubjectOpen, setIsAddSubjectOpen] = useState(false);
@@ -54,57 +56,83 @@ export default function Assessments() {
 
     const reader = new FileReader();
     reader.onload = (event) => {
-      const data = new Uint8Array(event.target?.result as ArrayBuffer);
-      const workbook = XLSX.read(data, { type: 'array' });
-      const sheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[sheetName];
-      const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }) as any[][];
+      try {
+        const data = new Uint8Array(event.target?.result as ArrayBuffer);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }) as any[][];
 
-      // Create new subject
-      const subjectId = newSubjectName.toLowerCase().replace(/\s+/g, '-') + '-' + Date.now();
-      dispatch({
-        type: 'ADD_SUBJECT',
-        payload: {
-          id: subjectId,
-          name: newSubjectName.trim(),
-          maxScore: 100,
-        },
-      });
+        // Create new subject
+        const subjectId = newSubjectName.toLowerCase().replace(/\s+/g, '-') + '-' + Date.now();
+        dispatch({
+          type: 'ADD_SUBJECT',
+          payload: {
+            id: subjectId,
+            name: newSubjectName.trim(),
+            maxScore: 100,
+          },
+        });
 
-      // Parse the imported data - expecting RN and 10 scores
-      const rows = jsonData.slice(1); // Skip header
-      rows.forEach((row) => {
-        const rn = parseInt(row[0]);
-        if (isNaN(rn)) return;
+        // Parse the imported data - expecting RN and scores
+        const rows = jsonData.slice(1); // Skip header
+        let importedCount = 0;
+        let skippedCount = 0;
 
-        const student = students.find(s => s.rn === rn);
-        if (student) {
-          const scores = row.slice(1, 11).map((v: any) => {
-            const num = parseFloat(v);
-            return isNaN(num) ? 0 : (scoreDisplayMode === '100%' ? num / 10 : num);
-          });
+        rows.forEach((row) => {
+          const rn = parseInt(row[0]);
+          if (isNaN(rn)) {
+            skippedCount++;
+            return;
+          }
 
-          // Update assessment for this student and new subject
-          setTimeout(() => {
-            dispatch({
-              type: 'UPDATE_ASSESSMENT',
-              payload: {
-                studentId: student.id,
-                subjectId: subjectId,
-                scores: scores.length === 10 ? scores : [...scores, ...Array(10 - scores.length).fill(0)],
-              },
+          const student = students.find(s => s.rn === rn);
+          if (student) {
+            // Check if second column is student name (string) or score (number)
+            const hasStudentName = typeof row[1] === 'string' && isNaN(parseFloat(row[1]));
+            const scoreStartIndex = hasStudentName ? 2 : 1;
+            
+            const scores = row.slice(scoreStartIndex, scoreStartIndex + 10).map((v: any) => {
+              const num = parseFloat(v);
+              return isNaN(num) ? 0 : (scoreDisplayMode === '100%' ? num / 10 : num);
             });
-          }, 100);
-        }
-      });
 
-      // Select the new subject
-      setTimeout(() => {
-        dispatch({ type: 'SET_SELECTED_SUBJECT', payload: subjectId });
-      }, 150);
+            // Update assessment for this student and new subject
+            setTimeout(() => {
+              dispatch({
+                type: 'UPDATE_ASSESSMENT',
+                payload: {
+                  studentId: student.id,
+                  subjectId: subjectId,
+                  scores: scores.length === 10 ? scores : [...scores, ...Array(10 - scores.length).fill(0)],
+                },
+              });
+            }, 100);
+            importedCount++;
+          } else {
+            skippedCount++;
+          }
+        });
 
-      setNewSubjectName('');
-      setIsAddSubjectOpen(false);
+        // Select the new subject
+        setTimeout(() => {
+          dispatch({ type: 'SET_SELECTED_SUBJECT', payload: subjectId });
+        }, 150);
+
+        toast({
+          title: "Import Successful",
+          description: `Imported ${importedCount} student scores for "${newSubjectName}". ${skippedCount > 0 ? `${skippedCount} rows skipped.` : ''}`,
+        });
+
+        setNewSubjectName('');
+        setIsAddSubjectOpen(false);
+      } catch (error) {
+        toast({
+          title: "Import Failed",
+          description: "Failed to parse the file. Please check the file format.",
+          variant: "destructive",
+        });
+      }
     };
     reader.readAsArrayBuffer(file);
     e.target.value = '';
@@ -326,7 +354,7 @@ export default function Assessments() {
                 onChange={(e) => setNewSubjectName(e.target.value)}
               />
               <p className="text-sm text-muted-foreground">
-                Import an Excel/CSV file with columns: RN, 1st, 2nd, 3rd, ... 10th (scores by roll number)
+                Import an Excel/CSV file with columns: RN or Roll Number, Student Name (optional) and scores by roll number
               </p>
               <input
                 ref={subjectFileInputRef}
