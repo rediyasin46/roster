@@ -63,8 +63,84 @@ export default function Assessments() {
         const worksheet = workbook.Sheets[sheetName];
         const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }) as any[][];
 
+        if (jsonData.length < 2) {
+          toast({
+            title: "Import Failed",
+            description: "File is empty or has no data rows.",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        // Detect header structure dynamically
+        const headers = jsonData[0].map((h: any) => String(h).toLowerCase().trim());
+        const rnColIndex = headers.findIndex((h: string) => h === 'rn' || h.includes('roll'));
+        const nameColIndex = headers.findIndex((h: string) => h.includes('name') || h.includes('student'));
+        
+        // Find score columns - any numeric column that's not RN
+        const scoreColIndices: number[] = [];
+        headers.forEach((h: string, idx: number) => {
+          if (idx !== rnColIndex && idx !== nameColIndex) {
+            scoreColIndices.push(idx);
+          }
+        });
+
+        if (rnColIndex === -1) {
+          toast({
+            title: "Import Failed",
+            description: "Could not find RN or Roll Number column. Please check your file headers.",
+            variant: "destructive",
+          });
+          return;
+        }
+
         // Create new subject
         const subjectId = newSubjectName.toLowerCase().replace(/\s+/g, '-') + '-' + Date.now();
+        
+        // Parse the imported data
+        const rows = jsonData.slice(1); // Skip header
+        let importedCount = 0;
+        let createdCount = 0;
+        let skippedCount = 0;
+
+        // First pass: collect all students to create/update
+        const studentsToProcess: { rn: number; name: string; scores: number[] }[] = [];
+
+        rows.forEach((row) => {
+          const rn = parseInt(row[rnColIndex]);
+          if (isNaN(rn) || rn <= 0) {
+            skippedCount++;
+            return;
+          }
+
+          const studentName = nameColIndex !== -1 ? String(row[nameColIndex] || '') : '';
+          
+          // Extract scores from remaining columns
+          const scores = scoreColIndices.slice(0, 10).map((colIdx) => {
+            const val = row[colIdx];
+            const num = parseFloat(val);
+            // Store internally as 0-10 scale
+            return isNaN(num) ? 0 : Math.min(10, Math.max(0, num > 10 ? num / 10 : num));
+          });
+
+          // Pad to 10 scores if needed
+          while (scores.length < 10) {
+            scores.push(0);
+          }
+
+          studentsToProcess.push({ rn, name: studentName, scores });
+        });
+
+        if (studentsToProcess.length === 0) {
+          toast({
+            title: "Import Failed",
+            description: "No valid data rows found in the file.",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        // Add subject first
         dispatch({
           type: 'ADD_SUBJECT',
           payload: {
@@ -74,59 +150,72 @@ export default function Assessments() {
           },
         });
 
-        // Parse the imported data - expecting RN and scores
-        const rows = jsonData.slice(1); // Skip header
-        let importedCount = 0;
-        let skippedCount = 0;
+        // Process students with a small delay to ensure subject is added
+        setTimeout(() => {
+          const currentStudents = [...students];
+          const newStudentsData: { id: string; name: string; rn: number }[] = [];
+          const assessmentsToUpdate: { studentId: string; subjectId: string; scores: number[] }[] = [];
 
-        rows.forEach((row) => {
-          const rn = parseInt(row[0]);
-          if (isNaN(rn)) {
-            skippedCount++;
-            return;
-          }
-
-          const student = students.find(s => s.rn === rn);
-          if (student) {
-            // Check if second column is student name (string) or score (number)
-            const hasStudentName = typeof row[1] === 'string' && isNaN(parseFloat(row[1]));
-            const scoreStartIndex = hasStudentName ? 2 : 1;
+          studentsToProcess.forEach((data) => {
+            let student = currentStudents.find(s => s.rn === data.rn);
             
-            const scores = row.slice(scoreStartIndex, scoreStartIndex + 10).map((v: any) => {
-              const num = parseFloat(v);
-              return isNaN(num) ? 0 : (scoreDisplayMode === '100%' ? num / 10 : num);
-            });
+            if (!student) {
+              // Create new student
+              const newStudentId = `student-${Date.now()}-${data.rn}`;
+              const newStudent = {
+                id: newStudentId,
+                name: data.name,
+                rn: data.rn,
+              };
+              newStudentsData.push(newStudent);
+              student = newStudent;
+              createdCount++;
+            } else {
+              // Update student name if provided and current is empty
+              if (data.name && !student.name) {
+                dispatch({
+                  type: 'UPDATE_STUDENT',
+                  payload: { ...student, name: data.name },
+                });
+              }
+              importedCount++;
+            }
 
-            // Update assessment for this student and new subject
-            setTimeout(() => {
+            assessmentsToUpdate.push({
+              studentId: student.id,
+              subjectId: subjectId,
+              scores: data.scores,
+            });
+          });
+
+          // Add new students
+          newStudentsData.forEach((newStudent) => {
+            dispatch({ type: 'ADD_STUDENT', payload: newStudent });
+          });
+
+          // Update assessments after students are added
+          setTimeout(() => {
+            assessmentsToUpdate.forEach((assessment) => {
               dispatch({
                 type: 'UPDATE_ASSESSMENT',
-                payload: {
-                  studentId: student.id,
-                  subjectId: subjectId,
-                  scores: scores.length === 10 ? scores : [...scores, ...Array(10 - scores.length).fill(0)],
-                },
+                payload: assessment,
               });
-            }, 100);
-            importedCount++;
-          } else {
-            skippedCount++;
-          }
-        });
+            });
 
-        // Select the new subject
-        setTimeout(() => {
-          dispatch({ type: 'SET_SELECTED_SUBJECT', payload: subjectId });
-        }, 150);
+            // Select the new subject
+            dispatch({ type: 'SET_SELECTED_SUBJECT', payload: subjectId });
 
-        toast({
-          title: "Import Successful",
-          description: `Imported ${importedCount} student scores for "${newSubjectName}". ${skippedCount > 0 ? `${skippedCount} rows skipped.` : ''}`,
-        });
+            toast({
+              title: "Import Successful",
+              description: `Subject "${newSubjectName}" imported: ${importedCount} existing students updated, ${createdCount} new students created.${skippedCount > 0 ? ` ${skippedCount} rows skipped.` : ''}`,
+            });
+          }, 100);
+        }, 50);
 
         setNewSubjectName('');
         setIsAddSubjectOpen(false);
       } catch (error) {
+        console.error('Import error:', error);
         toast({
           title: "Import Failed",
           description: "Failed to parse the file. Please check the file format.",
