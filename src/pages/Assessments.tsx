@@ -483,9 +483,22 @@ export default function Assessments() {
                     <th>8th</th>
                     <th>9th</th>
                     <th>10th</th>
+                    <th className="bg-[hsl(var(--table-calculated))]">{selectedSubject?.name || 'Subject'} /100%</th>
                   </>
                 )}
-                <th className="bg-[hsl(var(--table-calculated))]">{selectedSubject?.name || 'Subject'} /100%</th>
+                {scoreDisplayMode === '100%' && (
+                  <>
+                    {subjectsWithScores.map(subject => (
+                      <th key={subject.id} className="bg-[hsl(142,70%,45%)]">
+                        {subject.name}
+                      </th>
+                    ))}
+                    {subjectsWithScores.length > 1 && (
+                      <th className="bg-[hsl(var(--table-calculated))]">Sum</th>
+                    )}
+                    <th className="bg-[hsl(45,100%,70%)] text-foreground">Average</th>
+                  </>
+                )}
                 <th className="bg-[hsl(var(--table-calculated))]">Rank</th>
                 <th>Action</th>
               </tr>
@@ -497,6 +510,26 @@ export default function Assessments() {
                 const rawTotal = getStudentTotal(student.id, selectedSubjectId!);
                 const total = rawTotal * 10; // Convert to 100% scale (10 assessments × 10 points = 100)
                 const rank = getStudentRank(student.id, selectedSubjectId!);
+
+                // Calculate totals for all subjects with scores
+                const subjectTotals = subjectsWithScores.map(subject => {
+                  const subjectAssessment = getStudentAssessment(student.id, subject.id);
+                  const subjectScores = subjectAssessment?.scores || Array(10).fill(0);
+                  return subjectScores.reduce((sum, s) => sum + s, 0) * 10; // Convert to 100% scale
+                });
+                const sumAllSubjects = subjectTotals.reduce((sum, t) => sum + t, 0);
+                const avgAllSubjects = subjectsWithScores.length > 0 ? sumAllSubjects / subjectsWithScores.length : 0;
+
+                // Calculate overall rank based on sum of all subjects
+                const allStudentSums = students.map(s => {
+                  const totals = subjectsWithScores.map(subject => {
+                    const a = getStudentAssessment(s.id, subject.id);
+                    return (a?.scores || Array(10).fill(0)).reduce((sum, sc) => sum + sc, 0) * 10;
+                  });
+                  return { studentId: s.id, sum: totals.reduce((sum, t) => sum + t, 0) };
+                });
+                allStudentSums.sort((a, b) => b.sum - a.sum);
+                const overallRank = allStudentSums.findIndex(t => t.studentId === student.id) + 1;
 
                 return (
                   <tr key={student.id}>
@@ -524,17 +557,32 @@ export default function Assessments() {
                         </span>
                       )}
                     </td>
-                    {scoreDisplayMode === '10%' && scores.map((score, idx) => (
-                      <EditableCell
-                        key={idx}
-                        value={score * displayMultiplier}
-                        onChange={(value) => handleUpdateScore(student.id, idx, value)}
-                        maxValue={maxInputValue}
-                        displayMultiplier={1}
-                      />
-                    ))}
-                    <td className="cell-calculated">{total.toFixed(0)}</td>
-                    <td className="cell-rank">{rank}</td>
+                    {scoreDisplayMode === '10%' && (
+                      <>
+                        {scores.map((score, idx) => (
+                          <EditableCell
+                            key={idx}
+                            value={score * displayMultiplier}
+                            onChange={(value) => handleUpdateScore(student.id, idx, value)}
+                            maxValue={maxInputValue}
+                            displayMultiplier={1}
+                          />
+                        ))}
+                        <td className="cell-calculated">{total.toFixed(0)}</td>
+                      </>
+                    )}
+                    {scoreDisplayMode === '100%' && (
+                      <>
+                        {subjectTotals.map((subjectTotal, idx) => (
+                          <td key={subjectsWithScores[idx].id}>{subjectTotal.toFixed(0)}</td>
+                        ))}
+                        {subjectsWithScores.length > 1 && (
+                          <td className="cell-calculated">{sumAllSubjects.toFixed(0)}</td>
+                        )}
+                        <td className="cell-average">{avgAllSubjects.toFixed(2)}</td>
+                      </>
+                    )}
+                    <td className="cell-rank">{scoreDisplayMode === '100%' ? overallRank : rank}</td>
                     <td className="whitespace-nowrap">
                       <div className="flex gap-1 justify-center">
                         <button
