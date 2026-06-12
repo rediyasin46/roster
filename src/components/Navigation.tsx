@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FileSpreadsheet, Trophy, Users, Award, Tag } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const navItems = [
   { path: '/', icon: FileSpreadsheet, label: 'Continues Assessments' },
