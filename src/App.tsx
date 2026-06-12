@@ -7,6 +7,8 @@ import { MarkbookProvider } from "@/context/MarkbookContext";
 import Index from "./pages/Index";
 import Rank from "./pages/Rank";
 import Roster from "./pages/Roster";
+import Certificate from "./pages/Certificate";
+import Pricing from "./pages/Pricing";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +24,8 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/rank" element={<Rank />} />
             <Route path="/roster" element={<Roster />} />
+            <Route path="/certificate" element={<Certificate />} />
+            <Route path="/pricing" element={<Pricing />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
