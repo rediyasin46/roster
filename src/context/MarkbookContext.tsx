@@ -1,16 +1,6 @@
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
 import { MarkbookState, Student, Subject, Assessment, SchoolInfo } from '@/types/markbook';
 
-const defaultSubjects: Subject[] = [
-  { id: 'siltigna', name: 'Siltigna', maxScore: 100 },
-  { id: 'amharic', name: 'Amharic', maxScore: 100 },
-  { id: 'english', name: 'English', maxScore: 100 },
-  { id: 'maths', name: 'Maths', maxScore: 100 },
-  { id: 'science', name: 'Science', maxScore: 100 },
-  { id: 'sineluba', name: 'Sineluba', maxScore: 100 },
-  { id: 'hpe', name: 'HPE', maxScore: 100 },
-];
-
 const initialState: MarkbookState = {
   schoolInfo: {
     school: 'Afran',
@@ -20,9 +10,9 @@ const initialState: MarkbookState = {
     class: '',
   },
   students: [],
-  subjects: defaultSubjects,
+  subjects: [],
   assessments: [],
-  selectedSubjectId: 'siltigna',
+  selectedSubjectId: null,
   scoreDisplayMode: '100%',
 };
 
@@ -93,14 +83,25 @@ function markbookReducer(state: MarkbookState, action: Action): MarkbookState {
           : state.selectedSubjectId,
       };
     case 'UPDATE_ASSESSMENT':
-      return {
-        ...state,
-        assessments: state.assessments.map(a =>
-          a.studentId === action.payload.studentId && a.subjectId === action.payload.subjectId
-            ? action.payload
-            : a
-        ),
-      };
+      const existingAssessment = state.assessments.find(
+        a => a.studentId === action.payload.studentId && a.subjectId === action.payload.subjectId
+      );
+      if (existingAssessment) {
+        return {
+          ...state,
+          assessments: state.assessments.map(a =>
+            a.studentId === action.payload.studentId && a.subjectId === action.payload.subjectId
+              ? action.payload
+              : a
+          ),
+        };
+      } else {
+        // If assessment doesn't exist, create it
+        return {
+          ...state,
+          assessments: [...state.assessments, action.payload],
+        };
+      }
     case 'SET_SELECTED_SUBJECT':
       return { ...state, selectedSubjectId: action.payload };
     case 'SET_SCORE_DISPLAY_MODE':
