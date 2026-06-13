@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { MarkbookProvider } from "@/context/MarkbookContext";
 import Index from "./pages/Index";
+import Home from "./pages/Home";
 import Rank from "./pages/Rank";
 import Roster from "./pages/Roster";
 import Certificate from "./pages/Certificate";
@@ -23,6 +24,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/home" element={<Home />} />
             <Route path="/rank" element={<Rank />} />
             <Route path="/roster" element={<Roster />} />
             <Route path="/certificate" element={<Certificate />} />
