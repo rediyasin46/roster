@@ -1,6 +1,5 @@
 import { useMarkbook } from '@/context/MarkbookContext';
-import { Navigation } from '@/components/Navigation';
-import { SchoolInfoHeader } from '@/components/SchoolInfoHeader';
+import { AppHeader } from '@/components/AppHeader';
 import { ActionButtons } from '@/components/ActionButtons';
 import { RankData } from '@/types/markbook';
 
@@ -52,21 +51,11 @@ export default function Rank() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="markbook-header flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Markbook</h1>
-        <Navigation />
-      </div>
+      <AppHeader />
 
       <div className="p-4 space-y-4">
         {/* Page Title */}
         <h2 className="text-xl font-semibold text-primary">Student Rank</h2>
-
-        {/* School Info */}
-        <SchoolInfoHeader 
-          showClass 
-          showSubjectCount 
-          showStudentCount 
-        />
 
         {/* Action Buttons */}
         <ActionButtons

@@ -1,9 +1,6 @@
-import { Plus } from 'lucide-react';
 import { useMarkbook } from '@/context/MarkbookContext';
-import { Navigation } from '@/components/Navigation';
-import { SchoolInfoHeader } from '@/components/SchoolInfoHeader';
+import { AppHeader } from '@/components/AppHeader';
 import { ActionButtons } from '@/components/ActionButtons';
-import { Button } from '@/components/ui/button';
 
 export default function Roster() {
   const { state, getStudentTotal, getOverallTotal, getOverallAverage, getOverallRank } = useMarkbook();
@@ -93,29 +90,11 @@ export default function Roster() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="markbook-header flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Markbook</h1>
-        <Navigation />
-      </div>
+      <AppHeader />
 
       <div className="p-4 space-y-4">
         {/* Page Title */}
         <h2 className="text-xl font-semibold text-primary">Student Roster</h2>
-
-        {/* School Info */}
-        <SchoolInfoHeader 
-          showClass 
-          showSubjectCount 
-          showStudentCount 
-        />
-
-        {/* Add Button */}
-        <div className="flex justify-end">
-          <Button variant="outline" size="sm" className="bg-[hsl(142,70%,85%)] hover:bg-[hsl(142,70%,75%)]">
-            <Plus className="w-4 h-4" />
-            add/+
-          </Button>
-        </div>
 
         {/* Action Buttons */}
         <ActionButtons

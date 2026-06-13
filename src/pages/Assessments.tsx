@@ -2,7 +2,7 @@ import { useState, useRef } from 'react';
 import { Plus, Trash2, Edit2, Upload, Printer, FileDown, X } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { useMarkbook } from '@/context/MarkbookContext';
-import { Navigation } from '@/components/Navigation';
+import { AppHeader } from '@/components/AppHeader';
 import { ActionButtons } from '@/components/ActionButtons';
 import { EditableCell } from '@/components/EditableCell';
 import { Input } from '@/components/ui/input';
@@ -467,10 +467,7 @@ export default function Assessments() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="markbook-header flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Markbook</h1>
-        <Navigation />
-      </div>
+      <AppHeader />
 
       <div className="p-6 space-y-6">
         {/* Page Title */}

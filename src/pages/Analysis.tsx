@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useMarkbook } from '@/context/MarkbookContext';
-import { Navigation } from '@/components/Navigation';
+import { AppHeader } from '@/components/AppHeader';
 import { Card } from '@/components/ui/card';
 import {
   Select,
@@ -178,15 +178,7 @@ export default function Analysis() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Performance Analytics</h1>
-            <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">{schoolInfo.school} • {schoolInfo.year}</p>
-          </div>
-          <Navigation />
-        </div>
-      </div>
+      <AppHeader />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         {/* Filter Section */}

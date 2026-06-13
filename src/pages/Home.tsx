@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Navigation } from "@/components/Navigation";
+import { AppHeader } from "@/components/AppHeader";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -60,10 +60,7 @@ const testimonials = [
 const Home = () => {
   return (
     <div className="min-h-screen bg-background">
-      <header className="markbook-header mb-0 flex items-center justify-between rounded-lg m-4">
-        <h1>ScoreBook</h1>
-        <Navigation />
-      </header>
+      <AppHeader />
 
       {/* Hero */}
       <section className="relative overflow-hidden">

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Navigation } from "@/components/Navigation";
+import { AppHeader } from "@/components/AppHeader";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -250,12 +250,9 @@ const Pricing = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-primary/5 p-4">
-      <header className="markbook-header mb-8 flex items-center justify-between rounded-lg">
-        <h1>Pricing</h1>
-        <Navigation />
-      </header>
+      <AppHeader />
 
-      <main className="max-w-6xl mx-auto pb-16">
+      <main className="max-w-6xl mx-auto pb-16 mt-8">
         {/* Heading */}
         <div className="text-center mb-10">
           <Badge className="bg-primary/10 text-primary hover:bg-primary/10 border-0 mb-4 gap-1">

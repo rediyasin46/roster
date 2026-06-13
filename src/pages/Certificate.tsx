@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { Eye } from "lucide-react";
-import { Navigation } from "@/components/Navigation";
-import { SchoolInfoHeader } from "@/components/SchoolInfoHeader";
+import { AppHeader } from "@/components/AppHeader";
 import { Button } from "@/components/ui/button";
 import { useMarkbook } from "@/context/MarkbookContext";
 
@@ -11,14 +10,10 @@ const Certificate = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="markbook-header flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Markbook</h1>
-        <Navigation />
-      </div>
+      <AppHeader />
 
       <div className="p-4 space-y-4">
         <h2 className="text-xl font-semibold text-primary">Student Certificates</h2>
-        <SchoolInfoHeader showClass showStudentCount />
 
         <div className="overflow-x-auto border rounded-lg">
           <table className="markbook-table">
