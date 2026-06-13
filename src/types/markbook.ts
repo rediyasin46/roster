@@ -2,6 +2,11 @@ export interface Student {
   id: string;
   name: string;
   rn: number;
+  sex?: string;
+  age?: string | number;
+  village?: string;
+  kebele?: string;
+  year?: string;
 }
 
 export interface Subject {
