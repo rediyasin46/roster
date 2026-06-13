@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Rank from "./pages/Rank";
 import Roster from "./pages/Roster";
 import Certificate from "./pages/Certificate";
+import CertificateDetail from "./pages/CertificateDetail";
 import Pricing from "./pages/Pricing";
 import NotFound from "./pages/NotFound";
 
@@ -25,6 +26,7 @@ const App = () => (
             <Route path="/rank" element={<Rank />} />
             <Route path="/roster" element={<Roster />} />
             <Route path="/certificate" element={<Certificate />} />
+            <Route path="/certificate/:id" element={<CertificateDetail />} />
             <Route path="/pricing" element={<Pricing />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
