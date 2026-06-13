@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Home from "./pages/Home";
 import Rank from "./pages/Rank";
 import Roster from "./pages/Roster";
+import Analysis from "./pages/Analysis";
 import Certificate from "./pages/Certificate";
 import CertificateDetail from "./pages/CertificateDetail";
 import Pricing from "./pages/Pricing";
@@ -27,6 +28,7 @@ const App = () => (
             <Route path="/home" element={<Home />} />
             <Route path="/rank" element={<Rank />} />
             <Route path="/roster" element={<Roster />} />
+            <Route path="/analysis" element={<Analysis />} />
             <Route path="/certificate" element={<Certificate />} />
             <Route path="/certificate/:id" element={<CertificateDetail />} />
             <Route path="/pricing" element={<Pricing />} />

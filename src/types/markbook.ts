@@ -7,6 +7,9 @@ export interface Student {
   village?: string;
   kebele?: string;
   year?: string;
+  absent?: string | number;
+  conduct?: string;
+  remark?: string;
 }
 
 export interface Subject {
@@ -27,6 +30,8 @@ export interface SchoolInfo {
   year: string;
   semester: string;
   class: string;
+  grade?: string;
+  section?: string;
 }
 
 export interface MarkbookState {

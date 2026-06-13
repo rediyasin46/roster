@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Plus, Trash2, Edit2, Upload } from 'lucide-react';
+import { Plus, Trash2, Edit2, Upload, Printer, FileDown, X } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { useMarkbook } from '@/context/MarkbookContext';
 import { Navigation } from '@/components/Navigation';
@@ -21,34 +21,37 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function Assessments() {
-  const { state, dispatch, getStudentAssessment, getStudentTotal, getStudentRank } = useMarkbook();
-  const { schoolInfo, students, subjects, selectedSubjectId, scoreDisplayMode } = state;
+  const { state, dispatch } = useMarkbook();
+  const { schoolInfo, students, subjects, selectedSubjectId } = state;
   const { toast } = useToast();
   
+  const [editingSchoolField, setEditingSchoolField] = useState<string | null>(null);
+  const [editingSchoolValue, setEditingSchoolValue] = useState('');
   const [newSubjectName, setNewSubjectName] = useState('');
   const [isAddSubjectOpen, setIsAddSubjectOpen] = useState(false);
   const [editingStudent, setEditingStudent] = useState<string | null>(null);
-  const [editStudentName, setEditStudentName] = useState('');
+  const [editStudentField, setEditStudentField] = useState<string>('');
+  const [editStudentValue, setEditStudentValue] = useState('');
+  const [importMode, setImportMode] = useState<'single' | 'multiple'>('single');
+  const [selectedImportFile, setSelectedImportFile] = useState<File | null>(null);
   const subjectFileInputRef = useRef<HTMLInputElement>(null);
 
-  const selectedSubject = subjects.find(s => s.id === selectedSubjectId);
-  const displayMultiplier = scoreDisplayMode === '10%' ? 1 : 10;
-  const maxInputValue = scoreDisplayMode === '10%' ? 10 : 100;
+  const handleSchoolInfoEdit = (field: string, currentValue: string) => {
+    setEditingSchoolField(field);
+    setEditingSchoolValue(currentValue);
+  };
 
-  // Get subjects that have scores (any student has non-zero scores)
-  const subjectsWithScores = subjects.filter(subject => {
-    return students.some(student => {
-      const assessment = getStudentAssessment(student.id, subject.id);
-      return assessment && assessment.scores.some(s => s > 0);
+  const handleSchoolInfoSave = (field: string) => {
+    dispatch({
+      type: 'SET_SCHOOL_INFO',
+      payload: { [field]: editingSchoolValue },
     });
-  });
-
-  // Always show default subject (first one) plus subjects with scores
-  const availableSubjects = subjects.length > 0 
-    ? [subjects[0], ...subjectsWithScores.filter(s => s.id !== subjects[0].id)]
-    : [];
+    setEditingSchoolField(null);
+  };
 
   const handleSubjectFileImport = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -72,75 +75,9 @@ export default function Assessments() {
           return;
         }
 
-        // Detect header structure dynamically
-        const headers = jsonData[0].map((h: any) => String(h).toLowerCase().trim());
-        const rnColIndex = headers.findIndex((h: string) => h === 'rn' || h.includes('roll'));
-        const nameColIndex = headers.findIndex((h: string) => h.includes('name') || h.includes('student'));
-        
-        // Find score columns - any numeric column that's not RN
-        const scoreColIndices: number[] = [];
-        headers.forEach((h: string, idx: number) => {
-          if (idx !== rnColIndex && idx !== nameColIndex) {
-            scoreColIndices.push(idx);
-          }
-        });
-
-        if (rnColIndex === -1) {
-          toast({
-            title: "Import Failed",
-            description: "Could not find RN or Roll Number column. Please check your file headers.",
-            variant: "destructive",
-          });
-          return;
-        }
-
         // Create new subject
         const subjectId = newSubjectName.toLowerCase().replace(/\s+/g, '-') + '-' + Date.now();
         
-        // Parse the imported data
-        const rows = jsonData.slice(1); // Skip header
-        let importedCount = 0;
-        let createdCount = 0;
-        let skippedCount = 0;
-
-        // First pass: collect all students to create/update
-        const studentsToProcess: { rn: number; name: string; scores: number[] }[] = [];
-
-        rows.forEach((row) => {
-          const rn = parseInt(row[rnColIndex]);
-          if (isNaN(rn) || rn <= 0) {
-            skippedCount++;
-            return;
-          }
-
-          const studentName = nameColIndex !== -1 ? String(row[nameColIndex] || '') : '';
-          
-          // Extract scores from remaining columns
-          const scores = scoreColIndices.slice(0, 10).map((colIdx) => {
-            const val = row[colIdx];
-            const num = parseFloat(val);
-            // Store internally as 0-10 scale
-            return isNaN(num) ? 0 : Math.min(10, Math.max(0, num > 10 ? num / 10 : num));
-          });
-
-          // Pad to 10 scores if needed
-          while (scores.length < 10) {
-            scores.push(0);
-          }
-
-          studentsToProcess.push({ rn, name: studentName, scores });
-        });
-
-        if (studentsToProcess.length === 0) {
-          toast({
-            title: "Import Failed",
-            description: "No valid data rows found in the file.",
-            variant: "destructive",
-          });
-          return;
-        }
-
-        // Add subject first
         dispatch({
           type: 'ADD_SUBJECT',
           payload: {
@@ -150,67 +87,12 @@ export default function Assessments() {
           },
         });
 
-        // Process students with a small delay to ensure subject is added
-        setTimeout(() => {
-          const currentStudents = [...students];
-          const newStudentsData: { id: string; name: string; rn: number }[] = [];
-          const assessmentsToUpdate: { studentId: string; subjectId: string; scores: number[] }[] = [];
+        dispatch({ type: 'SET_SELECTED_SUBJECT', payload: subjectId });
 
-          studentsToProcess.forEach((data) => {
-            let student = currentStudents.find(s => s.rn === data.rn);
-            
-            if (!student) {
-              // Create new student
-              const newStudentId = `student-${Date.now()}-${data.rn}`;
-              const newStudent = {
-                id: newStudentId,
-                name: data.name,
-                rn: data.rn,
-              };
-              newStudentsData.push(newStudent);
-              student = newStudent;
-              createdCount++;
-            } else {
-              // Update student name if provided and current is empty
-              if (data.name && !student.name) {
-                dispatch({
-                  type: 'UPDATE_STUDENT',
-                  payload: { ...student, name: data.name },
-                });
-              }
-              importedCount++;
-            }
-
-            assessmentsToUpdate.push({
-              studentId: student.id,
-              subjectId: subjectId,
-              scores: data.scores,
-            });
-          });
-
-          // Add new students
-          newStudentsData.forEach((newStudent) => {
-            dispatch({ type: 'ADD_STUDENT', payload: newStudent });
-          });
-
-          // Update assessments after students are added
-          setTimeout(() => {
-            assessmentsToUpdate.forEach((assessment) => {
-              dispatch({
-                type: 'UPDATE_ASSESSMENT',
-                payload: assessment,
-              });
-            });
-
-            // Select the new subject
-            dispatch({ type: 'SET_SELECTED_SUBJECT', payload: subjectId });
-
-            toast({
-              title: "Import Successful",
-              description: `Subject "${newSubjectName}" imported: ${importedCount} existing students updated, ${createdCount} new students created.${skippedCount > 0 ? ` ${skippedCount} rows skipped.` : ''}`,
-            });
-          }, 100);
-        }, 50);
+        toast({
+          title: "Subject Added",
+          description: `Subject "${newSubjectName}" has been added successfully.`,
+        });
 
         setNewSubjectName('');
         setIsAddSubjectOpen(false);
@@ -235,6 +117,10 @@ export default function Assessments() {
         id: `student-${Date.now()}`,
         name: '',
         rn: newRn,
+        sex: '',
+        age: '',
+        village: '',
+        kebele: '',
       },
     });
   };
@@ -243,90 +129,54 @@ export default function Assessments() {
     dispatch({ type: 'DELETE_STUDENT', payload: studentId });
   };
 
-  const handleUpdateScore = (studentId: string, assessmentIndex: number, value: number) => {
-    const assessment = getStudentAssessment(studentId, selectedSubjectId!);
-    if (assessment) {
-      const adjustedValue = scoreDisplayMode === '100%' ? value / 10 : value;
-      const newScores = [...assessment.scores];
-      newScores[assessmentIndex] = adjustedValue;
-      dispatch({
-        type: 'UPDATE_ASSESSMENT',
-        payload: { ...assessment, scores: newScores },
-      });
-    }
-  };
-
-  const handleImport = (data: any[][]) => {
-    const rows = data.slice(1);
-    rows.forEach((row, index) => {
-      const studentName = row[1] || '';
-      const scores = row.slice(2, 12).map(v => {
-        const num = parseFloat(v);
-        return isNaN(num) ? 0 : (scoreDisplayMode === '100%' ? num / 10 : num);
-      });
-
-      const existingStudent = students[index];
-      if (existingStudent) {
-        dispatch({
-          type: 'UPDATE_STUDENT',
-          payload: { ...existingStudent, name: studentName },
-        });
-        const assessment = getStudentAssessment(existingStudent.id, selectedSubjectId!);
-        if (assessment) {
-          dispatch({
-            type: 'UPDATE_ASSESSMENT',
-            payload: { ...assessment, scores },
-          });
-        }
-      } else {
-        const newStudent = {
-          id: `student-${Date.now()}-${index}`,
-          name: studentName,
-          rn: students.length + index + 1,
-        };
-        dispatch({ type: 'ADD_STUDENT', payload: newStudent });
-        setTimeout(() => {
-          dispatch({
-            type: 'UPDATE_ASSESSMENT',
-            payload: {
-              studentId: newStudent.id,
-              subjectId: selectedSubjectId!,
-              scores,
-            },
-          });
-        }, 0);
-      }
-    });
-  };
-
-  const getTableData = () => {
-    return students.map(student => {
-      const assessment = getStudentAssessment(student.id, selectedSubjectId!);
-      const scores = assessment?.scores || Array(10).fill(0);
-      const displayScores = scores.map(s => (s * displayMultiplier).toFixed(displayMultiplier === 1 ? 0 : 1));
-      const rawTotal = getStudentTotal(student.id, selectedSubjectId!);
-      const total = rawTotal * 10; // Convert to 100% scale
-      const rank = getStudentRank(student.id, selectedSubjectId!);
-      return [student.rn, student.name, ...displayScores, total.toFixed(0), rank];
-    });
-  };
-
-  const tableHeaders = ['RN', 'Student Name', '1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th', '9th', '10th', 'Total /100%', 'Rank', 'Action'];
-
-  const handleStartEditStudent = (studentId: string, currentName: string) => {
+  const handleStartEditStudent = (studentId: string, field: string, currentValue: any) => {
     setEditingStudent(studentId);
-    setEditStudentName(currentName);
+    setEditStudentField(field);
+    setEditStudentValue(String(currentValue || ''));
   };
 
-  const handleSaveStudentName = (studentId: string) => {
+  const handleSaveStudentField = (studentId: string) => {
     const student = students.find(s => s.id === studentId);
     if (student) {
       dispatch({
         type: 'UPDATE_STUDENT',
-        payload: { ...student, name: editStudentName },
+        payload: { ...student, [editStudentField]: editStudentValue },
       });
     }
     setEditingStudent(null);
+  };
+
+  const handleExportExcel = () => {
+    const ws_data = students.map(student => [
+      student.rn,
+      student.name,
+      student.sex || '',
+      student.age || '',
+      student.village || '',
+      student.kebele || '',
+    ]);
+
+    const ws = XLSX.utils.aoa_to_sheet([
+      ['RN', 'Student Name', 'Sex', 'Age', 'Village', 'Kebele'],
+      ...ws_data,
+    ]);
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Students");
+    XLSX.writeFile(wb, `assessments_${Date.now()}.xlsx`);
+
+    toast({
+      title: "Export Successful",
+      description: "Data exported to Excel successfully.",
+    });
+  };
+
+  const handlePrint = () => {
+    window.print();
+    toast({
+      title: "Print",
+      description: "Opening print dialog...",
+    });
   };
 
   return (
@@ -337,282 +187,816 @@ export default function Assessments() {
         <Navigation />
       </div>
 
-      <div className="p-4 space-y-4">
+      <div className="p-6 space-y-6">
         {/* Page Title */}
-        <h2 className="text-xl font-semibold text-primary">Continues Assessments</h2>
+        <h2 className="text-2xl font-semibold text-primary">Continues Assessments</h2>
 
-        {/* School Info */}
-        <div className="flex flex-wrap gap-2 text-sm">
-          <div className="flex">
-            <span className="info-label">School</span>
-            <span className="info-value">{schoolInfo.school}</span>
+        {/* Editable School Info Header */}
+        <div className="grid grid-cols-6 gap-3">
+          <div>
+            <label className="text-xs font-medium text-muted-foreground">School:</label>
+            {editingSchoolField === 'school' ? (
+              <input
+                type="text"
+                value={editingSchoolValue}
+                onChange={(e) => setEditingSchoolValue(e.target.value)}
+                onBlur={() => handleSchoolInfoSave('school')}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleSchoolInfoSave('school');
+                  if (e.key === 'Escape') setEditingSchoolField(null);
+                }}
+                className="w-full px-2 py-1 bg-green-100 border-0 rounded outline-none font-medium"
+                autoFocus
+              />
+            ) : (
+              <div
+                onClick={() => handleSchoolInfoEdit('school', schoolInfo.school)}
+                className="px-3 py-2 bg-green-100 rounded cursor-pointer hover:bg-green-200 font-medium"
+              >
+                {schoolInfo.school || 'Double-click to edit'}
+              </div>
+            )}
           </div>
-          <div className="flex">
-            <span className="info-label">Student no</span>
-            <span className="info-value">{students.length}</span>
+
+          <div>
+            <label className="text-xs font-medium text-muted-foreground">Year:</label>
+            {editingSchoolField === 'year' ? (
+              <input
+                type="text"
+                value={editingSchoolValue}
+                onChange={(e) => setEditingSchoolValue(e.target.value)}
+                onBlur={() => handleSchoolInfoSave('year')}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleSchoolInfoSave('year');
+                  if (e.key === 'Escape') setEditingSchoolField(null);
+                }}
+                className="w-full px-2 py-1 bg-green-100 border-0 rounded outline-none font-medium"
+                autoFocus
+              />
+            ) : (
+              <div
+                onClick={() => handleSchoolInfoEdit('year', schoolInfo.year)}
+                className="px-3 py-2 bg-green-100 rounded cursor-pointer hover:bg-green-200 font-medium"
+              >
+                {schoolInfo.year || 'Double-click to edit'}
+              </div>
+            )}
           </div>
-          <div className="flex">
-            <span className="info-label">Year</span>
-            <span className="info-value">{schoolInfo.year}</span>
+
+          <div>
+            <label className="text-xs font-medium text-muted-foreground">Semester:</label>
+            {editingSchoolField === 'semester' ? (
+              <input
+                type="text"
+                value={editingSchoolValue}
+                onChange={(e) => setEditingSchoolValue(e.target.value)}
+                onBlur={() => handleSchoolInfoSave('semester')}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleSchoolInfoSave('semester');
+                  if (e.key === 'Escape') setEditingSchoolField(null);
+                }}
+                className="w-full px-2 py-1 bg-green-100 border-0 rounded outline-none font-medium"
+                autoFocus
+              />
+            ) : (
+              <div
+                onClick={() => handleSchoolInfoEdit('semester', schoolInfo.semester)}
+                className="px-3 py-2 bg-green-100 rounded cursor-pointer hover:bg-green-200 font-medium"
+              >
+                {schoolInfo.semester || 'Double-click to edit'}
+              </div>
+            )}
           </div>
-          <div className="flex">
-            <span className="info-label">Subject</span>
-            <span className="info-value">{selectedSubject?.name || '-'} (score 0)</span>
+
+          <div>
+            <label className="text-xs font-medium text-muted-foreground">Grade:</label>
+            {editingSchoolField === 'grade' ? (
+              <input
+                type="text"
+                value={editingSchoolValue}
+                onChange={(e) => setEditingSchoolValue(e.target.value)}
+                onBlur={() => handleSchoolInfoSave('grade')}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleSchoolInfoSave('grade');
+                  if (e.key === 'Escape') setEditingSchoolField(null);
+                }}
+                className="w-full px-2 py-1 bg-green-100 border-0 rounded outline-none font-medium"
+                autoFocus
+              />
+            ) : (
+              <div
+                onClick={() => handleSchoolInfoEdit('grade', schoolInfo.grade || '')}
+                className="px-3 py-2 bg-green-100 rounded cursor-pointer hover:bg-green-200 font-medium"
+              >
+                {schoolInfo.grade || 'Double-click to edit'}
+              </div>
+            )}
           </div>
-          <div className="flex">
-            <span className="info-label">Semester</span>
-            <span className="info-value">{schoolInfo.semester}</span>
+
+          <div>
+            <label className="text-xs font-medium text-muted-foreground">Section:</label>
+            {editingSchoolField === 'section' ? (
+              <input
+                type="text"
+                value={editingSchoolValue}
+                onChange={(e) => setEditingSchoolValue(e.target.value)}
+                onBlur={() => handleSchoolInfoSave('section')}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleSchoolInfoSave('section');
+                  if (e.key === 'Escape') setEditingSchoolField(null);
+                }}
+                className="w-full px-2 py-1 bg-green-100 border-0 rounded outline-none font-medium"
+                autoFocus
+              />
+            ) : (
+              <div
+                onClick={() => handleSchoolInfoEdit('section', schoolInfo.section || '')}
+                className="px-3 py-2 bg-green-100 rounded cursor-pointer hover:bg-green-200 font-medium"
+              >
+                {schoolInfo.section || 'Double-click to edit'}
+              </div>
+            )}
           </div>
-          <div className="flex">
-            <span className="info-label">Teacher</span>
-            <span className="info-value">{schoolInfo.teacher}</span>
+
+          <div>
+            <label className="text-xs font-medium text-muted-foreground">Teacher:</label>
+            {editingSchoolField === 'teacher' ? (
+              <input
+                type="text"
+                value={editingSchoolValue}
+                onChange={(e) => setEditingSchoolValue(e.target.value)}
+                onBlur={() => handleSchoolInfoSave('teacher')}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleSchoolInfoSave('teacher');
+                  if (e.key === 'Escape') setEditingSchoolField(null);
+                }}
+                className="w-full px-2 py-1 bg-green-100 border-0 rounded outline-none font-medium"
+                autoFocus
+              />
+            ) : (
+              <div
+                onClick={() => handleSchoolInfoEdit('teacher', schoolInfo.teacher)}
+                className="px-3 py-2 bg-green-100 rounded cursor-pointer hover:bg-green-200 font-medium"
+              >
+                {schoolInfo.teacher || 'Double-click to edit'}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Info Section */}
+        <div className="grid grid-cols-4 gap-4">
+          <div>
+            <label className="text-xs font-medium text-muted-foreground">No. Subject:</label>
+            <div className="px-3 py-2 bg-green-100 rounded font-medium">
+              {subjects.length}
+            </div>
+          </div>
+          <div>
+            <label className="text-xs font-medium text-muted-foreground">No. Student:</label>
+            <div className="px-3 py-2 bg-green-100 rounded font-medium">
+              {students.length}
+            </div>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <ActionButtons
-          showImport
-          onImport={handleImport}
-          tableData={getTableData()}
-          tableHeaders={tableHeaders.slice(0, -1)}
-          fileName="assessments"
-        />
+        <div className="flex flex-wrap gap-3">
+          <Button 
+            onClick={handleAddStudent}
+            className="bg-cyan-500 hover:bg-cyan-600 text-white gap-2"
+          >
+            <Plus className="w-4 h-4" />
+            Add student info
+          </Button>
+          <Button 
+            onClick={() => setIsAddSubjectOpen(true)}
+            className="bg-cyan-500 hover:bg-cyan-600 text-white gap-2"
+          >
+            <Plus className="w-4 h-4" />
+            Add Subject
+          </Button>
+          <Button 
+            onClick={handleExportExcel}
+            className="bg-yellow-500 hover:bg-yellow-600 text-white gap-2"
+          >
+            <FileDown className="w-4 h-4" />
+            Export Excel
+          </Button>
+          <Button 
+            className="bg-yellow-500 hover:bg-yellow-600 text-white gap-2"
+          >
+            <FileDown className="w-4 h-4" />
+            Export Word
+          </Button>
+          <Button 
+            onClick={handlePrint}
+            className="bg-yellow-500 hover:bg-yellow-600 text-white gap-2"
+          >
+            <Printer className="w-4 h-4" />
+            Print
+          </Button>
+        </div>
 
-        {/* Subject and Score Display Toggle */}
-        <div className="flex flex-wrap items-center gap-4">
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium">Subject:</span>
-            <Select
-              value={selectedSubjectId || ''}
-              onValueChange={(value) => {
-                if (value === 'add-subject') {
-                  setIsAddSubjectOpen(true);
-                } else {
-                  dispatch({ type: 'SET_SELECTED_SUBJECT', payload: value });
-                }
-              }}
-            >
-              <SelectTrigger className="w-40 bg-[hsl(var(--success))] text-[hsl(var(--success-foreground))]">
-                <SelectValue />
+        {/* Display and Subject Filters */}
+        <div className="flex flex-wrap items-center gap-6">
+          <div className="flex items-center gap-3">
+            <span className="text-sm font-medium">Display:</span>
+            <Select>
+              <SelectTrigger className="w-40">
+                <SelectValue defaultValue="Total(100%)" />
               </SelectTrigger>
-              <SelectContent className="bg-card z-50">
-                {availableSubjects.map(subject => (
-                  <SelectItem key={subject.id} value={subject.id}>
-                    {subject.name}
-                  </SelectItem>
-                ))}
-                <SelectItem value="add-subject" className="text-primary font-medium">
-                  <span className="flex items-center gap-2">
-                    <Plus className="w-4 h-4" />
-                    Add Subject
-                  </span>
-                </SelectItem>
+              <SelectContent>
+                <SelectItem value="total">Total(100%)</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium">Display:</span>
-            <Select
-              value={scoreDisplayMode}
-              onValueChange={(value: '10%' | '100%') => 
-                dispatch({ type: 'SET_SCORE_DISPLAY_MODE', payload: value })
-              }
-            >
-              <SelectTrigger className="w-32 score-toggle">
+          <div className="flex items-center gap-3">
+            <span className="text-sm font-medium">Subject:</span>
+            <Select value={selectedSubjectId || ''} onValueChange={(value) => {
+              dispatch({ type: 'SET_SELECTED_SUBJECT', payload: value });
+            }}>
+              <SelectTrigger className="w-40 bg-green-200">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-card z-50">
-                <SelectItem value="10%">1st-10th</SelectItem>
-                <SelectItem value="100%">100% only</SelectItem>
+              <SelectContent>
+                {subjects.map(subject => (
+                  <SelectItem key={subject.id} value={subject.id}>
+                    {subject.name}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
+          </div>
+        </div>
+
+        {/* Subjects Section */}
+        <div className="space-y-3">
+          <h3 className="text-sm font-semibold text-primary">
+            Subjects ({subjects.length})
+          </h3>
+          <div className="flex flex-wrap gap-2">
+            {subjects.map(subject => (
+              <Badge key={subject.id} variant="outline" className="px-3 py-1 bg-gray-100">
+                {subject.name}
+              </Badge>
+            ))}
           </div>
         </div>
 
         {/* Add Subject Dialog */}
         <Dialog open={isAddSubjectOpen} onOpenChange={setIsAddSubjectOpen}>
-          <DialogContent className="bg-card">
-            <DialogHeader>
+          <DialogContent className="bg-card max-w-2xl">
+            <DialogHeader className="flex flex-row items-center justify-between pr-2">
               <DialogTitle>Import Subject Scores</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <Input
-                placeholder="Subject Name"
-                value={newSubjectName}
-                onChange={(e) => setNewSubjectName(e.target.value)}
-              />
-              <p className="text-sm text-muted-foreground">
-                Import an Excel/CSV file with columns: RN or Roll Number, Student Name (optional) and scores by roll number
-              </p>
-              <input
-                ref={subjectFileInputRef}
-                type="file"
-                accept=".xlsx,.xls,.csv"
-                onChange={handleSubjectFileImport}
-                className="hidden"
-              />
-              <Button 
-                onClick={() => subjectFileInputRef.current?.click()} 
-                className="w-full gap-2"
-                disabled={!newSubjectName.trim()}
+              <button
+                onClick={() => {
+                  setIsAddSubjectOpen(false);
+                  setNewSubjectName('');
+                  setSelectedImportFile(null);
+                  setImportMode('single');
+                }}
+                className="text-muted-foreground hover:text-foreground"
               >
-                <Upload className="w-4 h-4" />
-                Import Excel/CSV
-              </Button>
-            </div>
+                <X className="w-5 h-5" />
+              </button>
+            </DialogHeader>
+
+            <Tabs value={importMode} onValueChange={(value) => setImportMode(value as 'single' | 'multiple')} className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="single">Manual Entry</TabsTrigger>
+                <TabsTrigger value="multiple">Import Excel/CSV</TabsTrigger>
+              </TabsList>
+
+              {/* Tab 1: Manual Entry */}
+              <TabsContent value="single" className="space-y-4 mt-4">
+                <div>
+                  <label className="text-sm font-semibold text-foreground block mb-2">
+                    assessments.importMode
+                  </label>
+                  <Select value="single" disabled>
+                    <SelectTrigger className="bg-background border border-primary">
+                      <SelectValue />
+                    </SelectTrigger>
+                  </Select>
+                  <p className="text-xs text-muted-foreground mt-2">assessments.singleSubjectDesc</p>
+                </div>
+
+                <div>
+                  <label className="text-sm font-semibold text-foreground block mb-2">
+                    assessments.subjectName
+                  </label>
+                  <Input
+                    placeholder="Subject Name (optional - will use file name if empty)"
+                    value={newSubjectName}
+                    onChange={(e) => setNewSubjectName(e.target.value)}
+                    className="bg-background"
+                  />
+                  <p className="text-xs text-muted-foreground mt-2">assessments.subjectNameHint</p>
+                </div>
+
+                <p className="text-sm text-muted-foreground bg-muted p-3 rounded">
+                  Import an Excel file with standard columns: RN or Roll Number, Student Name (optional). Subject name is optional - if not provided, it will be extracted from the file name or sheet name. Rows = number of students. Additional columns can be score columns (1st–10th or total).
+                </p>
+
+                <Button 
+                  onClick={() => {
+                    if (newSubjectName.trim()) {
+                      const subjectId = newSubjectName.toLowerCase().replace(/\s+/g, '-') + '-' + Date.now();
+                      dispatch({
+                        type: 'ADD_SUBJECT',
+                        payload: {
+                          id: subjectId,
+                          name: newSubjectName.trim(),
+                          maxScore: 100,
+                        },
+                      });
+                      dispatch({ type: 'SET_SELECTED_SUBJECT', payload: subjectId });
+                      toast({
+                        title: "Subject Added",
+                        description: `Subject "${newSubjectName}" has been added successfully.`,
+                      });
+                      setNewSubjectName('');
+                      setSelectedImportFile(null);
+                      setIsAddSubjectOpen(false);
+                    } else {
+                      toast({
+                        title: "Please enter subject name",
+                        description: "Subject name is required",
+                        variant: "destructive",
+                      });
+                    }
+                  }}
+                  className="w-full bg-cyan-500 hover:bg-cyan-600 text-white gap-2"
+                >
+                  Add Subject
+                </Button>
+              </TabsContent>
+
+              {/* Tab 2: Excel/CSV Import */}
+              <TabsContent value="multiple" className="space-y-4 mt-4">
+                <div>
+                  <label className="text-sm font-semibold text-foreground block mb-2">
+                    assessments.importMode
+                  </label>
+                  <Select value="multiple" disabled>
+                    <SelectTrigger className="bg-background border border-primary">
+                      <SelectValue />
+                    </SelectTrigger>
+                  </Select>
+                  <p className="text-xs text-muted-foreground mt-2">assessments.singleSubjectDesc</p>
+                </div>
+
+                <div>
+                  <label className="text-sm font-semibold text-foreground block mb-2">
+                    assessments.subjectName
+                  </label>
+                  <Input
+                    placeholder="Subject Name (optional - will use file name if empty)"
+                    value={newSubjectName}
+                    onChange={(e) => setNewSubjectName(e.target.value)}
+                    className="bg-background"
+                  />
+                  <p className="text-xs text-muted-foreground mt-2">assessments.subjectNameHint</p>
+                </div>
+
+                <p className="text-sm text-muted-foreground bg-muted p-3 rounded">
+                  Import an Excel file with standard columns: RN or Roll Number, Student Name (optional). Subject name is optional - if not provided, it will be extracted from the file name or sheet name. Rows = number of students. Additional columns can be score columns (1st–10th or total).
+                </p>
+
+                {selectedImportFile && (
+                  <div className="bg-muted p-3 rounded flex items-center justify-between">
+                    <span className="text-sm font-medium">{selectedImportFile.name}</span>
+                    <button
+                      onClick={() => setSelectedImportFile(null)}
+                      className="text-muted-foreground hover:text-foreground"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+
+                <input
+                  ref={subjectFileInputRef}
+                  type="file"
+                  accept=".xlsx,.xls,.csv"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      setSelectedImportFile(file);
+                      // Auto-extract subject name from file if not set
+                      if (!newSubjectName.trim()) {
+                        const fileName = file.name.split('.')[0];
+                        setNewSubjectName(fileName);
+                      }
+                    }
+                  }}
+                  className="hidden"
+                />
+
+                <Button 
+                  onClick={() => subjectFileInputRef.current?.click()}
+                  variant="outline"
+                  className="w-full gap-2"
+                >
+                  <FileDown className="w-4 h-4" />
+                  Select Excel/CSV File
+                </Button>
+
+                <Button 
+                  onClick={() => {
+                    if (!selectedImportFile) {
+                      toast({
+                        title: "Please select a file",
+                        description: "Select an Excel or CSV file to import",
+                        variant: "destructive",
+                      });
+                      return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                      try {
+                        const data = new Uint8Array(event.target?.result as ArrayBuffer);
+                        const workbook = XLSX.read(data, { type: 'array' });
+                        const sheetName = workbook.SheetNames[0];
+                        const worksheet = workbook.Sheets[sheetName];
+                        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }) as any[][];
+
+                        if (jsonData.length < 2) {
+                          toast({
+                            title: "Import Failed",
+                            description: "File is empty or has no data rows.",
+                            variant: "destructive",
+                          });
+                          return;
+                        }
+
+                        // Create new subject
+                        const finalSubjectName = newSubjectName.trim() || selectedImportFile.name.split('.')[0];
+                        const subjectId = finalSubjectName.toLowerCase().replace(/\s+/g, '-') + '-' + Date.now();
+                        
+                        // Parse headers
+                        const headers = jsonData[0].map((h: any) => String(h).trim().toLowerCase());
+                        const rnIndex = headers.findIndex(h => h.includes('rn') || h.includes('roll'));
+                        const nameIndex = headers.findIndex(h => h.includes('name') || h.includes('student'));
+                        
+                        // Find score columns (all columns after name, or all numeric columns)
+                        let scoreIndices: number[] = [];
+                        for (let i = 0; i < headers.length; i++) {
+                          if (i !== rnIndex && i !== nameIndex) {
+                            // Check if this column looks like a score column
+                            const header = headers[i];
+                            if (header.includes('score') || header.includes('mark') || header.match(/^\d+/) || header === '') {
+                              scoreIndices.push(i);
+                            }
+                          }
+                        }
+
+                        // If no score columns found, use all columns after name
+                        if (scoreIndices.length === 0) {
+                          for (let i = Math.max(rnIndex, nameIndex) + 1; i < headers.length; i++) {
+                            scoreIndices.push(i);
+                          }
+                        }
+
+                        // Parse student data
+                        const newStudents: typeof students = [];
+                        const newAssessments: any[] = [];
+                        const existingStudentIds = new Set(students.map(s => s.id));
+
+                        for (let rowIdx = 1; rowIdx < jsonData.length; rowIdx++) {
+                          const row = jsonData[rowIdx];
+                          if (!row[rnIndex]) continue; // Skip empty rows
+
+                          const rn = parseInt(String(row[rnIndex])) || rowIdx;
+                          const studentName = row[nameIndex] ? String(row[nameIndex]).trim() : `Student ${rn}`;
+                          const studentId = `student-${rn}-${Date.now()}`;
+
+                          // Check if student already exists
+                          const existingStudent = students.find(s => s.rn === rn);
+                          const finalStudentId = existingStudent?.id || studentId;
+
+                          // Collect scores
+                          const scores: number[] = [];
+                          for (let scoreIdx of scoreIndices) {
+                            const scoreValue = parseFloat(String(row[scoreIdx])) || 0;
+                            scores.push(Math.min(Math.max(scoreValue, 0), 100)); // Clamp to 0-100
+                          }
+                          // Pad scores to 10 elements
+                          while (scores.length < 10) {
+                            scores.push(0);
+                          }
+
+                          // Add student if doesn't exist
+                          if (!existingStudent && !existingStudentIds.has(finalStudentId)) {
+                            newStudents.push({
+                              id: finalStudentId,
+                              name: studentName,
+                              rn: rn,
+                            });
+                            existingStudentIds.add(finalStudentId);
+                          }
+
+                          // Add assessment record
+                          newAssessments.push({
+                            studentId: finalStudentId,
+                            subjectId: subjectId,
+                            scores: scores,
+                          });
+                        }
+
+                        // Dispatch all updates
+                        if (newStudents.length > 0) {
+                          // Add each new student (which will also add assessments for all subjects)
+                          newStudents.forEach(student => {
+                            dispatch({
+                              type: 'ADD_STUDENT',
+                              payload: student,
+                            });
+                          });
+                        }
+
+                        // Add subject
+                        dispatch({
+                          type: 'ADD_SUBJECT',
+                          payload: {
+                            id: subjectId,
+                            name: finalSubjectName,
+                            maxScore: 100,
+                          },
+                        });
+
+                        // Update assessments with parsed scores
+                        const updatedAssessments = [...state.assessments, ...newAssessments];
+                        newAssessments.forEach(assessment => {
+                          dispatch({
+                            type: 'UPDATE_ASSESSMENT',
+                            payload: assessment,
+                          });
+                        });
+
+                        dispatch({ type: 'SET_SELECTED_SUBJECT', payload: subjectId });
+
+                        toast({
+                          title: "Import Successful",
+                          description: `Subject "${finalSubjectName}" added with ${newStudents.length > 0 ? newStudents.length + ' new students and ' : ''}${newAssessments.length} assessment records.`,
+                        });
+
+                        setNewSubjectName('');
+                        setSelectedImportFile(null);
+                        setIsAddSubjectOpen(false);
+                      } catch (error) {
+                        console.error('Import error:', error);
+                        toast({
+                          title: "Import Failed",
+                          description: "Failed to parse the file. Please check the file format.",
+                          variant: "destructive",
+                        });
+                      }
+                    };
+                    reader.readAsArrayBuffer(selectedImportFile);
+                  }}
+                  disabled={!selectedImportFile}
+                  className="w-full bg-cyan-500 hover:bg-cyan-600 text-white gap-2"
+                >
+                  <Upload className="w-4 h-4" />
+                  Import Excel/CSV
+                </Button>
+              </TabsContent>
+            </Tabs>
           </DialogContent>
         </Dialog>
 
-        {/* Data Table */}
+        {/* Students Table */}
         <div className="overflow-x-auto border rounded-lg">
-          <table className="markbook-table">
-            <thead>
+          <table className="w-full">
+            <thead className="bg-blue-600 text-white">
               <tr>
-                <th>RN</th>
-                <th>Student Name</th>
-                {scoreDisplayMode === '10%' && (
-                  <>
-                    <th>1st</th>
-                    <th>2nd</th>
-                    <th>3rd</th>
-                    <th>4th</th>
-                    <th>5th</th>
-                    <th>6th</th>
-                    <th>7th</th>
-                    <th>8th</th>
-                    <th>9th</th>
-                    <th>10th</th>
-                    <th className="bg-[hsl(var(--table-calculated))]">{selectedSubject?.name || 'Subject'} /100%</th>
-                  </>
-                )}
-                {scoreDisplayMode === '100%' && (
-                  <>
-                    {subjectsWithScores.map(subject => (
-                      <th key={subject.id} className="bg-[hsl(142,70%,45%)]">
-                        {subject.name}
-                      </th>
-                    ))}
-                    {subjectsWithScores.length > 1 && (
-                      <th className="bg-[hsl(var(--table-calculated))]">Sum</th>
-                    )}
-                    <th className="bg-[hsl(45,100%,70%)] text-foreground">Average</th>
-                  </>
-                )}
-                <th className="bg-[hsl(var(--table-calculated))]">Rank</th>
-                <th>Action</th>
+                <th className="px-4 py-3 text-left font-semibold">RN</th>
+                <th className="px-4 py-3 text-left font-semibold">Student Name</th>
+                <th className="px-4 py-3 text-left font-semibold">Sex</th>
+                <th className="px-4 py-3 text-left font-semibold">Age</th>
+                <th className="px-4 py-3 text-left font-semibold">Village</th>
+                <th className="px-4 py-3 text-left font-semibold">Kebele</th>
+                <th className="px-4 py-3 text-left font-semibold">Absent</th>
+                <th className="px-4 py-3 text-left font-semibold">Conduct</th>
+                <th className="px-4 py-3 text-left font-semibold">Remark</th>
+                <th className="px-4 py-3 text-left font-semibold">Action</th>
               </tr>
             </thead>
             <tbody>
-              {students.map(student => {
-                const assessment = getStudentAssessment(student.id, selectedSubjectId!);
-                const scores = assessment?.scores || Array(10).fill(0);
-                const rawTotal = getStudentTotal(student.id, selectedSubjectId!);
-                const total = rawTotal * 10; // Convert to 100% scale (10 assessments × 10 points = 100)
-                const rank = getStudentRank(student.id, selectedSubjectId!);
-
-                // Calculate totals for all subjects with scores
-                const subjectTotals = subjectsWithScores.map(subject => {
-                  const subjectAssessment = getStudentAssessment(student.id, subject.id);
-                  const subjectScores = subjectAssessment?.scores || Array(10).fill(0);
-                  return subjectScores.reduce((sum, s) => sum + s, 0) * 10; // Convert to 100% scale
-                });
-                const sumAllSubjects = subjectTotals.reduce((sum, t) => sum + t, 0);
-                const avgAllSubjects = subjectsWithScores.length > 0 ? sumAllSubjects / subjectsWithScores.length : 0;
-
-                // Calculate overall rank based on sum of all subjects
-                const allStudentSums = students.map(s => {
-                  const totals = subjectsWithScores.map(subject => {
-                    const a = getStudentAssessment(s.id, subject.id);
-                    return (a?.scores || Array(10).fill(0)).reduce((sum, sc) => sum + sc, 0) * 10;
-                  });
-                  return { studentId: s.id, sum: totals.reduce((sum, t) => sum + t, 0) };
-                });
-                allStudentSums.sort((a, b) => b.sum - a.sum);
-                const overallRank = allStudentSums.findIndex(t => t.studentId === student.id) + 1;
-
-                return (
-                  <tr key={student.id}>
-                    <td className="font-medium">{student.rn}</td>
-                    <td className="text-left min-w-[120px]">
-                      {editingStudent === student.id ? (
-                        <input
-                          type="text"
-                          value={editStudentName}
-                          onChange={(e) => setEditStudentName(e.target.value)}
-                          onBlur={() => handleSaveStudentName(student.id)}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter') handleSaveStudentName(student.id);
-                            if (e.key === 'Escape') setEditingStudent(null);
-                          }}
-                          className="w-full px-2 py-1 bg-transparent border-b-2 border-primary outline-none"
-                          autoFocus
-                        />
-                      ) : (
-                        <span 
-                          onDoubleClick={() => handleStartEditStudent(student.id, student.name)}
-                          className="cursor-pointer"
-                        >
-                          {student.name || <span className="text-muted-foreground italic">Click to add name</span>}
-                        </span>
-                      )}
-                    </td>
-                    {scoreDisplayMode === '10%' && (
-                      <>
-                        {scores.map((score, idx) => (
-                          <EditableCell
-                            key={idx}
-                            value={score * displayMultiplier}
-                            onChange={(value) => handleUpdateScore(student.id, idx, value)}
-                            maxValue={maxInputValue}
-                            displayMultiplier={1}
-                          />
-                        ))}
-                        <td className="cell-calculated">{total.toFixed(0)}</td>
-                      </>
+              {students.map((student) => (
+                <tr key={student.id} className="border-t hover:bg-gray-50">
+                  <td className="px-4 py-3 font-medium">{student.rn}</td>
+                  <td className="px-4 py-3 text-left">
+                    {editingStudent === student.id && editStudentField === 'name' ? (
+                      <input
+                        type="text"
+                        value={editStudentValue}
+                        onChange={(e) => setEditStudentValue(e.target.value)}
+                        onBlur={() => handleSaveStudentField(student.id)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') handleSaveStudentField(student.id);
+                          if (e.key === 'Escape') setEditingStudent(null);
+                        }}
+                        className="w-full px-2 py-1 border rounded outline-none"
+                        autoFocus
+                      />
+                    ) : (
+                      <span
+                        onDoubleClick={() => handleStartEditStudent(student.id, 'name', student.name)}
+                        className="cursor-pointer hover:text-blue-600"
+                      >
+                        {student.name || '-'}
+                      </span>
                     )}
-                    {scoreDisplayMode === '100%' && (
-                      <>
-                        {subjectTotals.map((subjectTotal, idx) => (
-                          <td key={subjectsWithScores[idx].id}>{subjectTotal.toFixed(0)}</td>
-                        ))}
-                        {subjectsWithScores.length > 1 && (
-                          <td className="cell-calculated">{sumAllSubjects.toFixed(0)}</td>
-                        )}
-                        <td className="cell-average">{avgAllSubjects.toFixed(2)}</td>
-                      </>
+                  </td>
+                  <td className="px-4 py-3 text-left">
+                    {editingStudent === student.id && editStudentField === 'sex' ? (
+                      <input
+                        type="text"
+                        value={editStudentValue}
+                        onChange={(e) => setEditStudentValue(e.target.value)}
+                        onBlur={() => handleSaveStudentField(student.id)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') handleSaveStudentField(student.id);
+                          if (e.key === 'Escape') setEditingStudent(null);
+                        }}
+                        className="w-full px-2 py-1 border rounded outline-none"
+                        autoFocus
+                      />
+                    ) : (
+                      <span
+                        onDoubleClick={() => handleStartEditStudent(student.id, 'sex', student.sex)}
+                        className="cursor-pointer hover:text-blue-600"
+                      >
+                        {student.sex || '-'}
+                      </span>
                     )}
-                    <td className="cell-rank">{scoreDisplayMode === '100%' ? overallRank : rank}</td>
-                    <td className="whitespace-nowrap">
-                      <div className="flex gap-1 justify-center">
-                        <button
-                          onClick={() => handleStartEditStudent(student.id, student.name)}
-                          className="btn-edit flex items-center gap-1"
-                        >
-                          <Edit2 className="w-3 h-3" />
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDeleteStudent(student.id)}
-                          className="btn-delete flex items-center gap-1"
-                        >
-                          <Trash2 className="w-3 h-3" />
-                          Delete
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
+                  </td>
+                  <td className="px-4 py-3 text-left">
+                    {editingStudent === student.id && editStudentField === 'age' ? (
+                      <input
+                        type="text"
+                        value={editStudentValue}
+                        onChange={(e) => setEditStudentValue(e.target.value)}
+                        onBlur={() => handleSaveStudentField(student.id)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') handleSaveStudentField(student.id);
+                          if (e.key === 'Escape') setEditingStudent(null);
+                        }}
+                        className="w-full px-2 py-1 border rounded outline-none"
+                        autoFocus
+                      />
+                    ) : (
+                      <span
+                        onDoubleClick={() => handleStartEditStudent(student.id, 'age', student.age)}
+                        className="cursor-pointer hover:text-blue-600"
+                      >
+                        {student.age || '-'}
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3 text-left">
+                    {editingStudent === student.id && editStudentField === 'village' ? (
+                      <input
+                        type="text"
+                        value={editStudentValue}
+                        onChange={(e) => setEditStudentValue(e.target.value)}
+                        onBlur={() => handleSaveStudentField(student.id)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') handleSaveStudentField(student.id);
+                          if (e.key === 'Escape') setEditingStudent(null);
+                        }}
+                        className="w-full px-2 py-1 border rounded outline-none"
+                        autoFocus
+                      />
+                    ) : (
+                      <span
+                        onDoubleClick={() => handleStartEditStudent(student.id, 'village', student.village)}
+                        className="cursor-pointer hover:text-blue-600"
+                      >
+                        {student.village || '-'}
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3 text-left">
+                    {editingStudent === student.id && editStudentField === 'kebele' ? (
+                      <input
+                        type="text"
+                        value={editStudentValue}
+                        onChange={(e) => setEditStudentValue(e.target.value)}
+                        onBlur={() => handleSaveStudentField(student.id)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') handleSaveStudentField(student.id);
+                          if (e.key === 'Escape') setEditingStudent(null);
+                        }}
+                        className="w-full px-2 py-1 border rounded outline-none"
+                        autoFocus
+                      />
+                    ) : (
+                      <span
+                        onDoubleClick={() => handleStartEditStudent(student.id, 'kebele', student.kebele)}
+                        className="cursor-pointer hover:text-blue-600"
+                      >
+                        {student.kebele || '-'}
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3 text-left">
+                    {editingStudent === student.id && editStudentField === 'absent' ? (
+                      <input
+                        type="text"
+                        value={editStudentValue}
+                        onChange={(e) => setEditStudentValue(e.target.value)}
+                        onBlur={() => handleSaveStudentField(student.id)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') handleSaveStudentField(student.id);
+                          if (e.key === 'Escape') setEditingStudent(null);
+                        }}
+                        className="w-full px-2 py-1 border rounded outline-none"
+                        autoFocus
+                      />
+                    ) : (
+                      <span
+                        onDoubleClick={() => handleStartEditStudent(student.id, 'absent', student.absent || '')}
+                        className="cursor-pointer hover:text-blue-600"
+                      >
+                        {(student as any).absent || '-'}
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3 text-left">
+                    {editingStudent === student.id && editStudentField === 'conduct' ? (
+                      <input
+                        type="text"
+                        value={editStudentValue}
+                        onChange={(e) => setEditStudentValue(e.target.value)}
+                        onBlur={() => handleSaveStudentField(student.id)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') handleSaveStudentField(student.id);
+                          if (e.key === 'Escape') setEditingStudent(null);
+                        }}
+                        className="w-full px-2 py-1 border rounded outline-none"
+                        autoFocus
+                      />
+                    ) : (
+                      <span
+                        onDoubleClick={() => handleStartEditStudent(student.id, 'conduct', (student as any).conduct || '')}
+                        className="cursor-pointer hover:text-blue-600"
+                      >
+                        {(student as any).conduct || '-'}
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3 text-left">
+                    {editingStudent === student.id && editStudentField === 'remark' ? (
+                      <input
+                        type="text"
+                        value={editStudentValue}
+                        onChange={(e) => setEditStudentValue(e.target.value)}
+                        onBlur={() => handleSaveStudentField(student.id)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') handleSaveStudentField(student.id);
+                          if (e.key === 'Escape') setEditingStudent(null);
+                        }}
+                        className="w-full px-2 py-1 border rounded outline-none"
+                        autoFocus
+                      />
+                    ) : (
+                      <span
+                        onDoubleClick={() => handleStartEditStudent(student.id, 'remark', (student as any).remark || '')}
+                        className="cursor-pointer hover:text-blue-600"
+                      >
+                        {(student as any).remark || '-'}
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    <div className="flex gap-2 justify-center">
+                      <button
+                        onClick={() => handleStartEditStudent(student.id, 'name', student.name)}
+                        className="px-3 py-1 bg-yellow-400 hover:bg-yellow-500 text-black rounded font-medium flex items-center gap-1"
+                      >
+                        <Edit2 className="w-3 h-3" />
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteStudent(student.id)}
+                        className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded font-medium flex items-center gap-1"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
-
-        {/* Add Student Button */}
-        <Button onClick={handleAddStudent} variant="outline" className="gap-2">
-          <Plus className="w-4 h-4" />
-          Add Student
-        </Button>
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { FileSpreadsheet, Trophy, Users, Award, Tag, Home } from 'lucide-react';
+import { FileSpreadsheet, Trophy, Users, Award, Tag, Home, BarChart3 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -8,6 +8,7 @@ const navItems = [
   { path: '/', icon: FileSpreadsheet, label: 'Assessments' },
   { path: '/rank', icon: Trophy, label: 'Rank' },
   { path: '/roster', icon: Users, label: 'Roster' },
+  { path: '/analysis', icon: BarChart3, label: 'Analysis' },
   { path: '/certificate', icon: Award, label: 'Certificate' },
   { path: '/pricing', icon: Tag, label: 'Pricing' },
 ];
