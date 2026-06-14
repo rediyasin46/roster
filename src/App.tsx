@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { MarkbookProvider } from "@/context/MarkbookContext";
 import Index from "./pages/Index";
 import Home from "./pages/Home";
+import GetStarted from "./pages/GetStarted";
 import Rank from "./pages/Rank";
 import Roster from "./pages/Roster";
 import Analysis from "./pages/Analysis";
@@ -26,6 +27,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/home" element={<Home />} />
+            <Route path="/getstarted" element={<GetStarted />} />
             <Route path="/rank" element={<Rank />} />
             <Route path="/roster" element={<Roster />} />
             <Route path="/analysis" element={<Analysis />} />

@@ -66,27 +66,36 @@ const Home = () => {
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/90 to-[hsl(210,100%,30%)]" />
         <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_20%_20%,white,transparent_40%)]" />
-        <div className="relative max-w-7xl mx-auto px-6 py-16 md:py-24 grid md:grid-cols-2 gap-10 items-center">
+        <div className="relative max-w-7xl mx-auto px-6 py-16 md:py-24 flex flex-col gap-10">
           <div className="text-primary-foreground animate-fade-in">
             <Badge className="bg-accent text-accent-foreground hover:bg-accent mb-4 gap-1">
               <Sparkles className="w-3 h-3" /> Built for Ethiopian Teachers
             </Badge>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight mb-4">
-              Simplify Mark Entry, Ranking, and Certificate Generation.
-            </h2>
+            <div>
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight mb-6 animate-text-slide">
+                Simplify Mark Entry:-
+              </h2>
+              <div className="overflow-hidden w-full bg-gradient-to-r from-transparent via-primary-foreground to-transparent py-4">
+                <div className="flex gap-8 animate-marquee">
+                  <span className="text-2xl md:text-3xl font-bold text-accent whitespace-nowrap flex-shrink-0">Ranking, Roster, Analysis and Certificate Generation.</span>
+                  <span className="text-2xl md:text-3xl font-bold text-accent whitespace-nowrap flex-shrink-0">Ranking, Roster, Analysis and Certificate Generation.</span>
+                  <span className="text-2xl md:text-3xl font-bold text-accent whitespace-nowrap flex-shrink-0">Ranking, Roster, Analysis and Certificate Generation.</span>
+                </div>
+              </div>
+            </div>
             <p className="text-base md:text-lg opacity-90 mb-8 max-w-xl">
               ScoreBook saves teachers hours of manual report card work — record marks, rank students, and print certificates in minutes.
             </p>
             <div className="flex flex-wrap gap-3">
               <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 rounded-full font-semibold shadow-lg hover:scale-105 transition-transform">
-                <Link to="/">Get Started Free <ArrowRight className="w-4 h-4" /></Link>
+                <Link to="/getstarted?mode=signup">Get Started Free <ArrowRight className="w-4 h-4" /></Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="rounded-full border-2 border-white bg-transparent text-white hover:bg-white hover:text-primary font-semibold">
-                <Link to="/">Sign In</Link>
+                <Link to="/getstarted?mode=signin">Sign In</Link>
               </Button>
             </div>
           </div>
-          <div className="relative animate-fade-in">
+          <div className="relative animate-slide-left w-full">
             <div className="relative rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 shadow-2xl p-4 rotate-1 hover:rotate-0 transition-transform">
               <div className="rounded-lg bg-card p-4 shadow-xl">
                 <div className="flex items-center gap-2 mb-3">
@@ -256,7 +265,7 @@ const Home = () => {
               Join Ethiopian teachers using ScoreBook to grade smarter, not harder.
             </p>
             <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 rounded-full font-bold text-base px-8 shadow-xl hover:scale-105 transition-transform">
-              <Link to="/">Get Started Free <ArrowRight className="w-5 h-5" /></Link>
+              <Link to="/getstarted?mode=signup">Get Started Free <ArrowRight className="w-5 h-5" /></Link>
             </Button>
           </div>
         </div>

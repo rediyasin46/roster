@@ -25,8 +25,8 @@ export default function Rank() {
     };
   });
 
-  // Sort by rank
-  const sortedRankData = [...rankData].sort((a, b) => a.rank - b.rank);
+  // Sort by roll number
+  const sortedRankData = [...rankData].sort((a, b) => a.rn - b.rn);
 
   const getTableData = () => {
     return sortedRankData.map(data => [

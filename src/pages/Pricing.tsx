@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { AppHeader } from "@/components/AppHeader";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -156,6 +157,19 @@ const faqs = [
 ];
 
 function PlanCard({ plan }: { plan: Plan }) {
+  const navigate = useNavigate();
+
+  const handleCtaClick = () => {
+    if (plan.cta === "Get Started" || plan.cta === "Choose Growth" || plan.cta === "Choose Pro" || plan.cta === "Go Premium") {
+      navigate("/getstarted?mode=signup");
+    } else if (plan.cta === "Start School Plan") {
+      navigate("/getstarted?mode=signup");
+    } else if (plan.cta === "Contact Sales") {
+      // Handle contact sales - could open a modal or email
+      window.location.href = "mailto:sales@scorebook.com";
+    }
+  };
+
   return (
     <Card
       className={cn(
@@ -228,6 +242,7 @@ function PlanCard({ plan }: { plan: Plan }) {
       </ul>
 
       <Button
+        onClick={handleCtaClick}
         className={cn(
           "w-full font-semibold",
           plan.popular

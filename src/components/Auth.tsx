@@ -14,6 +14,7 @@ interface AuthProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onAuthSuccess: (user: AuthUser) => void;
+  initialMode?: 'signin' | 'signup';
 }
 
 export interface AuthUser {
@@ -27,8 +28,8 @@ export interface AuthUser {
   schoolName?: string;
 }
 
-export function Auth({ open, onOpenChange, onAuthSuccess }: AuthProps) {
-  const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
+export function Auth({ open, onOpenChange, onAuthSuccess, initialMode = 'signin' }: AuthProps) {
+  const [authMode, setAuthMode] = useState<'signin' | 'signup'>(initialMode);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
