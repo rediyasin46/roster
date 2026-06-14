@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { AppHeader } from "@/components/AppHeader";
+import { PaymentDialog } from "@/components/PaymentDialog";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -156,18 +156,9 @@ const faqs = [
   },
 ];
 
-function PlanCard({ plan }: { plan: Plan }) {
-  const navigate = useNavigate();
-
+function PlanCard({ plan, onSelect }: { plan: Plan; onSelect: (plan: Plan) => void }) {
   const handleCtaClick = () => {
-    if (plan.cta === "Get Started" || plan.cta === "Choose Growth" || plan.cta === "Choose Pro" || plan.cta === "Go Premium") {
-      navigate("/getstarted?mode=signup");
-    } else if (plan.cta === "Start School Plan") {
-      navigate("/getstarted?mode=signup");
-    } else if (plan.cta === "Contact Sales") {
-      // Handle contact sales - could open a modal or email
-      window.location.href = "mailto:sales@scorebook.com";
-    }
+    onSelect(plan);
   };
 
   return (
@@ -262,6 +253,18 @@ function PlanCard({ plan }: { plan: Plan }) {
 
 const Pricing = () => {
   const [tab, setTab] = useState("teachers");
+  const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
+
+  const handlePlanSelect = (plan: Plan) => {
+    if (plan.price > 0) {
+      setSelectedPlan(plan);
+      setPaymentDialogOpen(true);
+    } else {
+      // Free plan - navigate to signup
+      window.location.href = "/getstarted?mode=signup";
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-primary/5 p-4">
@@ -304,7 +307,7 @@ const Pricing = () => {
           <TabsContent value="teachers">
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 pt-4">
               {teacherPlans.map((p) => (
-                <PlanCard key={p.name} plan={p} />
+                <PlanCard key={p.name} plan={p} onSelect={handlePlanSelect} />
               ))}
             </div>
           </TabsContent>
@@ -317,7 +320,7 @@ const Pricing = () => {
             </p>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 pt-4">
               {schoolPlans.map((p) => (
-                <PlanCard key={p.name} plan={p} />
+                <PlanCard key={p.name} plan={p} onSelect={handlePlanSelect} />
               ))}
             </div>
           </TabsContent>
@@ -353,6 +356,17 @@ const Pricing = () => {
           </Card>
         </section>
       </main>
+
+      {selectedPlan && (
+        <PaymentDialog
+          open={paymentDialogOpen}
+          onOpenChange={setPaymentDialogOpen}
+          plan={{
+            name: selectedPlan.name,
+            price: selectedPlan.price,
+          }}
+        />
+      )}
     </div>
   );
 };
