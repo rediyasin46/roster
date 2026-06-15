@@ -1,45 +1,52 @@
+import { Fragment } from 'react';
 import { useMarkbook } from '@/context/MarkbookContext';
 import { AppHeader } from '@/components/AppHeader';
 import { ActionButtons } from '@/components/ActionButtons';
+import { getSemesterSubjectScores } from '@/utils/semesterScores';
 
 export default function Roster() {
-  const { state, getStudentTotal, getOverallTotal, getOverallAverage, getOverallRank } = useMarkbook();
-  const { students, subjects, schoolInfo } = state;
+  const {
+    state,
+    getSemesterTotal,
+    getSemesterAverage,
+    getSemesterRank,
+    getSemestersWithData,
+  } = useMarkbook();
+  const { students, subjects, assessments } = state;
 
-  // For roster, we simulate semester data
-  // In a real app, this would come from the database with semester-specific assessments
-  const semesters = ['1st', '2nd'];
+  const semesters = getSemestersWithData();
+  const showAverageRow = semesters.length > 1;
 
   const getRosterData = () => {
-    return students.map(student => {
-      const semesterData = semesters.map(semester => {
-        const subjectScores: { [subjectId: string]: number } = {};
-        subjects.forEach(subject => {
-          // For demo, we use the same scores but could be semester-specific
-          subjectScores[subject.id] = getStudentTotal(student.id, subject.id);
-        });
-        
-        const total = Object.values(subjectScores).reduce((sum, s) => sum + s, 0);
-        const average = subjects.length > 0 ? total / subjects.length : 0;
-        
+    return students.map((student) => {
+      const semesterData = semesters.map((semester) => {
+        const subjectScores = getSemesterSubjectScores(
+          assessments,
+          subjects,
+          student.id,
+          semester
+        );
+
         return {
           semester,
           subjectScores,
-          total,
-          average,
-          rank: getOverallRank(student.id), // Simplified - would need semester-specific ranking
+          total: getSemesterTotal(student.id, semester),
+          average: getSemesterAverage(student.id, semester),
+          rank: getSemesterRank(student.id, semester),
         };
       });
 
-      // Calculate average row
       const avgSubjectScores: { [subjectId: string]: number } = {};
-      subjects.forEach(subject => {
-        const semesterScores = semesterData.map(s => s.subjectScores[subject.id] || 0);
-        avgSubjectScores[subject.id] = semesterScores.reduce((a, b) => a + b, 0) / semesterScores.length;
+      subjects.forEach((subject) => {
+        const semesterScores = semesterData.map((s) => s.subjectScores[subject.id] || 0);
+        avgSubjectScores[subject.id] =
+          semesterScores.reduce((a, b) => a + b, 0) / semesterScores.length;
       });
-      
+
       const avgTotal = Object.values(avgSubjectScores).reduce((sum, s) => sum + s, 0);
       const avgAverage = subjects.length > 0 ? avgTotal / subjects.length : 0;
+      const avgRank =
+        semesterData.reduce((sum, s) => sum + s.rank, 0) / Math.max(semesterData.length, 1);
 
       return {
         studentId: student.id,
@@ -51,23 +58,32 @@ export default function Roster() {
           subjectScores: avgSubjectScores,
           total: avgTotal,
           average: avgAverage,
-          rank: getOverallRank(student.id),
+          rank: Math.round(avgRank),
         },
       };
     });
   };
 
   const rosterData = getRosterData();
+  const rowCount = semesters.length + (showAverageRow ? 1 : 0);
 
   const getTableData = () => {
-    const rows: any[] = [];
-    rosterData.forEach(data => {
-      [...data.semesters, data.averageRow].forEach(semData => {
+    const rows: (string | number)[][] = [];
+    rosterData.forEach((data) => {
+      const rowsToExport = showAverageRow
+        ? [...data.semesters, data.averageRow]
+        : data.semesters;
+      rowsToExport.forEach((semData) => {
         rows.push([
           data.rn,
           data.studentName,
           semData.semester,
-          ...subjects.map(s => semData.subjectScores[s.id]?.toFixed(semData.semester === 'average' ? 1 : 0) || '0'),
+          ...subjects.map(
+            (s) =>
+              semData.subjectScores[s.id]?.toFixed(
+                semData.semester === 'average' ? 1 : 0
+              ) || '0'
+          ),
           semData.total.toFixed(semData.semester === 'average' ? 1 : 0),
           semData.average.toFixed(2),
           semData.rank,
@@ -78,32 +94,33 @@ export default function Roster() {
   };
 
   const tableHeaders = [
-    'RN', 
-    'Student Name', 
+    'RN',
+    'Student Name',
     'Semester',
-    ...subjects.map(s => s.name), 
-    'Total', 
-    'Average', 
-    'Rank'
+    ...subjects.map((s) => s.name),
+    'Total',
+    'Average',
+    'Rank',
   ];
+
+  const formatSemesterLabel = (semester: string) => {
+    if (semester === 'average') return 'average';
+    return semester;
+  };
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <AppHeader />
 
       <div className="p-4 space-y-4">
-        {/* Page Title */}
         <h2 className="text-xl font-semibold text-primary">Student Roster</h2>
 
-        {/* Action Buttons */}
         <ActionButtons
           tableData={getTableData()}
           tableHeaders={tableHeaders}
           fileName="student-roster"
         />
 
-        {/* Data Table */}
         <div className="overflow-x-auto border rounded-lg">
           <table className="markbook-table">
             <thead>
@@ -111,7 +128,7 @@ export default function Roster() {
                 <th>RN</th>
                 <th>Student Name</th>
                 <th>Semester</th>
-                {subjects.map(subject => (
+                {subjects.map((subject) => (
                   <th key={subject.id} className="bg-[hsl(210,100%,70%)]">
                     {subject.name}
                   </th>
@@ -122,48 +139,54 @@ export default function Roster() {
               </tr>
             </thead>
             <tbody>
-              {rosterData.map(data => (
-                <>
-                  {[...data.semesters, data.averageRow].map((semData, semIndex) => (
-                    <tr 
-                      key={`${data.studentId}-${semData.semester}`}
-                      className={semData.semester === 'average' ? 'bg-[hsl(210,50%,90%)]' : ''}
-                    >
-                      {semIndex === 0 && (
-                        <>
-                          <td 
-                            className="font-medium align-top" 
-                            rowSpan={semesters.length + 1}
-                          >
-                            {data.rn}
-                          </td>
-                          <td 
-                            className="text-left align-top" 
-                            rowSpan={semesters.length + 1}
-                          >
-                            {data.studentName}
-                          </td>
-                        </>
-                      )}
-                      <td className={semData.semester === 'average' ? 'font-medium italic' : ''}>
-                        {semData.semester}
-                      </td>
-                      {subjects.map(subject => (
-                        <td key={subject.id}>
-                          {semData.subjectScores[subject.id]?.toFixed(
-                            semData.semester === 'average' ? 1 : 0
-                          ) || '0'}
+              {rosterData.map((data) => {
+                const rowsToRender = showAverageRow
+                  ? [...data.semesters, data.averageRow]
+                  : data.semesters;
+
+                return (
+                  <Fragment key={data.studentId}>
+                    {rowsToRender.map((semData, semIndex) => (
+                      <tr
+                        key={`${data.studentId}-${semData.semester}`}
+                        className={
+                          semData.semester === 'average' ? 'bg-[hsl(210,50%,90%)]' : ''
+                        }
+                      >
+                        {semIndex === 0 && (
+                          <>
+                            <td className="font-medium align-top" rowSpan={rowCount}>
+                              {data.rn}
+                            </td>
+                            <td className="text-left align-top" rowSpan={rowCount}>
+                              {data.studentName}
+                            </td>
+                          </>
+                        )}
+                        <td
+                          className={
+                            semData.semester === 'average' ? 'font-medium italic' : ''
+                          }
+                        >
+                          {formatSemesterLabel(semData.semester)}
                         </td>
-                      ))}
-                      <td className="cell-calculated">
-                        {semData.total.toFixed(semData.semester === 'average' ? 1 : 0)}
-                      </td>
-                      <td className="cell-average">{semData.average.toFixed(2)}</td>
-                      <td className="cell-rank">{semData.rank}</td>
-                    </tr>
-                  ))}
-                </>
-              ))}
+                        {subjects.map((subject) => (
+                          <td key={subject.id}>
+                            {semData.subjectScores[subject.id]?.toFixed(
+                              semData.semester === 'average' ? 1 : 0
+                            ) || '0'}
+                          </td>
+                        ))}
+                        <td className="cell-calculated">
+                          {semData.total.toFixed(semData.semester === 'average' ? 1 : 0)}
+                        </td>
+                        <td className="cell-average">{semData.average.toFixed(2)}</td>
+                        <td className="cell-rank">{semData.rank}</td>
+                      </tr>
+                    ))}
+                  </Fragment>
+                );
+              })}
             </tbody>
           </table>
         </div>

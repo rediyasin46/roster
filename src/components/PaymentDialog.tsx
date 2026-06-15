@@ -30,6 +30,26 @@ export function PaymentDialog({ open, onOpenChange, plan }: PaymentDialogProps) 
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const fillDefaultTestData = () => {
+    setFormData({
+      fullName: 'Test User',
+      email: 'testuser@gmail.com',
+      phone: '+251912345678',
+    });
+  };
+
+  const isValidEmail = (email: string) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) &&
+    !email.toLowerCase().endsWith('@example.com');
+
+  const normalizePhone = (phone: string) => {
+    const digits = phone.replace(/\s+/g, '');
+    if (digits.startsWith('+251')) return digits;
+    if (digits.startsWith('0')) return `+251${digits.slice(1)}`;
+    if (digits.startsWith('251')) return `+${digits}`;
+    return `+251${digits}`;
+  };
+
   const handlePayment = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -37,6 +57,25 @@ export function PaymentDialog({ open, onOpenChange, plan }: PaymentDialogProps) 
       toast({
         title: 'Error',
         description: 'Please fill in all fields',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (!isValidEmail(formData.email.trim())) {
+      toast({
+        title: 'Invalid email',
+        description: 'Use a real email address. Chapa rejects test domains like @example.com.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    const normalizedPhone = normalizePhone(formData.phone.trim());
+    if (!/^\+251[79]\d{8}$/.test(normalizedPhone)) {
+      toast({
+        title: 'Invalid phone number',
+        description: 'Use a valid Ethiopian number, e.g. +251912345678 or 0912345678.',
         variant: 'destructive',
       });
       return;
@@ -51,7 +90,7 @@ export function PaymentDialog({ open, onOpenChange, plan }: PaymentDialogProps) 
         plan,
         formData.email,
         formData.fullName,
-        formData.phone
+        normalizedPhone
       );
 
       console.log('📝 Payment payload:', paymentPayload);
@@ -131,6 +170,17 @@ export function PaymentDialog({ open, onOpenChange, plan }: PaymentDialogProps) 
             </p>
           </div>
 
+          <div className="flex justify-end">
+            <Button
+              variant="secondary"
+              size="sm"
+              type="button"
+              onClick={fillDefaultTestData}
+            >
+              Fill default test values
+            </Button>
+          </div>
+
           <form onSubmit={handlePayment} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="fullName">Full Name</Label>
@@ -180,13 +230,13 @@ export function PaymentDialog({ open, onOpenChange, plan }: PaymentDialogProps) 
                   Processing...
                 </>
               ) : (
-                `Pay ${plan.price} ETB via Chapa`
+                `Pay ${plan.price} ETB via ChapaSecure`
               )}
             </Button>
           </form>
 
           <p className="text-xs text-muted-foreground text-center">
-            Secure payment powered by Chapa. Your payment information is encrypted.
+            Pay {plan.price} ETB via ChapaSecure payment powered by Chapa. Your payment information is encrypted.
           </p>
         </div>
       </DialogContent>

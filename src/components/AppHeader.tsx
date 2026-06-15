@@ -1,19 +1,36 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Navigation } from '@/components/Navigation';
 import { Settings } from '@/components/Settings';
 import { Auth, type AuthUser } from '@/components/Auth';
 import { UserProfileMenu } from '@/components/UserProfileMenu';
 import { Button } from '@/components/ui/button';
-import { Settings as SettingsIcon } from 'lucide-react';
+import { Settings as SettingsIcon, GraduationCap } from 'lucide-react';
 
 export function AppHeader() {
   const isMobile = useIsMobile();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
   const [language, setLanguage] = useState('en');
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    // Load saved theme from localStorage, default to 'light'
+    if (typeof window !== 'undefined') {
+      return (localStorage.getItem('rosterbook-theme') as 'light' | 'dark') || 'light';
+    }
+    return 'light';
+  });
   const [user, setUser] = useState<AuthUser | null>(null);
+
+  // Apply theme class to document root whenever theme changes
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+    localStorage.setItem('rosterbook-theme', theme);
+  }, [theme]);
 
   const handleAuthSuccess = (authUser: AuthUser) => {
     setUser(authUser);
@@ -27,18 +44,8 @@ export function AppHeader() {
     <div className="markbook-header flex items-center justify-between">
       {/* App Logo/Name */}
       <div className="flex items-center gap-2">
-        {isMobile ? (
-          // Small screen: RB in circle
-          <div className="flex flex-col items-center">
-            <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm">
-              RB
-            </div>
-            <span className="text-xs font-medium mt-1">RosterBook</span>
-          </div>
-        ) : (
-          // Large/Medium screen: Full text
-          <h1 className="text-2xl font-bold">RosterBook</h1>
-        )}
+        <GraduationCap className="w-7 h-7 text-accent shrink-0" />
+        <h1 className={`font-bold ${isMobile ? 'text-sm' : 'text-2xl'}`}>Rosterbook</h1>
       </div>
 
       {/* Navigation and Controls */}
@@ -90,3 +97,4 @@ export function AppHeader() {
     </div>
   );
 }
+

@@ -25,6 +25,20 @@ export default function PaymentSuccess() {
 
   useEffect(() => {
     const verifyPayment = async () => {
+        // Development helper: allow forcing a success state for local testing.
+        // Only enable when not in production to avoid inconsistent behavior.
+        const forceSuccess = searchParams.get('force_success');
+        const isProduction = import.meta.env.MODE === 'production';
+        if (!isProduction && forceSuccess === 'true') {
+          setPaymentStatus({
+            success: true,
+            message: 'Payment details fetched successfully',
+            reference: 'tx_local_force_success',
+            status: 'completed',
+            loading: false,
+          });
+          return;
+        }
       try {
         // Try to get reference from URL params
         let txRef = searchParams.get('tx_ref');
@@ -51,12 +65,17 @@ export default function PaymentSuccess() {
         console.log('Verifying payment with reference:', ref);
         const response = await chapaService.verifyPayment(ref!);
 
-        if (response.status === 'success' && response.data?.status === 'completed') {
+        const paymentDataStatus = response.data?.status?.toLowerCase();
+        const isPaymentComplete =
+          response.status === 'success' &&
+          (paymentDataStatus === 'completed' || paymentDataStatus === 'success');
+
+        if (isPaymentComplete) {
           setPaymentStatus({
             success: true,
             message: 'Payment completed successfully!',
             reference: ref,
-            status: response.data.status,
+            status: paymentDataStatus,
             loading: false,
           });
 
@@ -92,7 +111,10 @@ export default function PaymentSuccess() {
         console.error('Payment verification error:', error);
         setPaymentStatus({
           success: false,
-          message: 'Failed to verify payment. Please contact support.',
+          message:
+            error instanceof Error
+              ? error.message
+              : 'Failed to verify payment. Please contact support.',
           loading: false,
         });
       }
@@ -106,7 +128,13 @@ export default function PaymentSuccess() {
       <AppHeader />
 
       <div className="flex items-center justify-center min-h-[calc(100vh-60px)] p-4">
-        <Card className="max-w-md w-full p-8">
+        <Card
+          className={
+            paymentStatus.success
+              ? 'max-w-md w-full p-8 border-2 border-green-500 shadow-[0_0_20px_rgba(34,197,94,0.2)]'
+              : 'max-w-md w-full p-8'
+          }
+        >
           {paymentStatus.loading ? (
             <div className="text-center space-y-4">
               <div className="flex justify-center">
@@ -116,24 +144,24 @@ export default function PaymentSuccess() {
               <p className="text-muted-foreground text-sm">Please wait while we verify your payment...</p>
             </div>
           ) : paymentStatus.success ? (
-            <div className="text-center space-y-4">
+            <div className="payment-success-panel">
               <div className="flex justify-center">
-                <CheckCircle2 className="w-16 h-16 text-success" />
+                <div className="payment-success-icon-wrap">
+                  <CheckCircle2 className="payment-success-icon" strokeWidth={2.25} />
+                </div>
               </div>
-              <h2 className="text-2xl font-bold text-success">{paymentStatus.message}</h2>
-              <div className="bg-success/10 rounded-lg p-3 my-4">
-                <p className="text-sm text-muted-foreground">Reference:</p>
-                <p className="text-sm font-mono font-bold break-all">{paymentStatus.reference}</p>
+              <h2 className="payment-success-title">{paymentStatus.message}</h2>
+              <div className="payment-success-ref-box">
+                <p className="payment-success-label">Reference:</p>
+                <p className="payment-success-ref">{paymentStatus.reference}</p>
               </div>
-              <p className="text-muted-foreground text-sm">
+              <p className="payment-success-message">
                 Your subscription is now active. Redirecting to home page...
               </p>
-              <Button asChild className="w-full mt-4" size="lg">
-                <a href="/">
-                  <Home className="w-4 h-4 mr-2" />
-                  Go to Home
-                </a>
-              </Button>
+              <a href="/" className="payment-success-btn">
+                <Home className="w-4 h-4" />
+                Go to Home
+              </a>
             </div>
           ) : (
             <div className="text-center space-y-4">

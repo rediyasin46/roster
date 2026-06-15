@@ -5,8 +5,11 @@
 console.log('Chapa Service Loading...');
 console.log('Using backend payment service');
 
-const BACKEND_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-const APP_URL = import.meta.env.VITE_APP_URL || window.location.origin;
+// In dev, use same-origin `/api` so Vite proxies to the backend (avoids CORS).
+const BACKEND_URL = import.meta.env.DEV
+  ? ''
+  : (import.meta.env.VITE_API_URL || '');
+const APP_URL = window.location.origin;
 
 interface ChapaInitializePaymentParams {
   amount: number;
@@ -69,9 +72,9 @@ export const chapaService = {
           tx_ref: params.tx_ref,
           return_url: params.return_url,
           customization: {
-            title: params.customization?.title || 'ScoreBook Payment',
+            title: params.customization?.title || 'Rosterbook',
             description:
-              params.customization?.description || 'ScoreBook Subscription Payment',
+              params.customization?.description || 'Subscription',
           },
         }),
       });
@@ -87,6 +90,11 @@ export const chapaService = {
         responseData = JSON.parse(responseText);
       } catch (e) {
         console.error('❌ Failed to parse response as JSON:', responseText);
+        if (response.status === 500 && !responseText.trim()) {
+          throw new Error(
+            'Backend server is not running. Start it with: npm run dev:backend (or use npm run dev:all to run frontend and backend together).'
+          );
+        }
         throw new Error(`Server error: ${response.status} - ${responseText}`);
       }
 
@@ -131,6 +139,11 @@ export const chapaService = {
         responseData = JSON.parse(responseText);
       } catch (e) {
         console.error('❌ Failed to parse verification response:', responseText);
+        if (response.status === 500 && !responseText.trim()) {
+          throw new Error(
+            'Backend server is not running. Start it with: npm run dev:backend (or use npm run dev:all to run frontend and backend together).'
+          );
+        }
         throw new Error(`Server error: ${response.status}`);
       }
 
@@ -180,7 +193,7 @@ export const chapaService = {
       tx_ref: this.generateTxRef(),
       return_url: `${APP_URL}/payment-success`,
       customization: {
-        title: 'ScoreBook',
+        title: 'Rosterbook',
         description: `${plan.name} Plan ${plan.price} ETB`,
       },
     };

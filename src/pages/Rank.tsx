@@ -4,16 +4,26 @@ import { ActionButtons } from '@/components/ActionButtons';
 import { RankData } from '@/types/markbook';
 
 export default function Rank() {
-  const { state, getStudentTotal, getOverallTotal, getOverallAverage, getOverallRank } = useMarkbook();
-  const { students, subjects } = state;
+  const {
+    state,
+    getStudentTotal,
+    getOverallTotal,
+    getOverallAverage,
+    getOverallRank,
+  } = useMarkbook();
+  const { students, subjects, subjectSemesterView } = state;
 
-  // Calculate rank data
-  const rankData: RankData[] = students.map(student => {
+  const semesterLabel =
+    subjectSemesterView === 'both'
+      ? 'Average (1st & 2nd)'
+      : `${subjectSemesterView} Semester`;
+
+  const rankData: RankData[] = students.map((student) => {
     const subjectScores: { [subjectId: string]: number } = {};
-    subjects.forEach(subject => {
+    subjects.forEach((subject) => {
       subjectScores[subject.id] = getStudentTotal(student.id, subject.id);
     });
-    
+
     return {
       studentId: student.id,
       studentName: student.name,
@@ -25,14 +35,13 @@ export default function Rank() {
     };
   });
 
-  // Sort by roll number
   const sortedRankData = [...rankData].sort((a, b) => a.rn - b.rn);
 
   const getTableData = () => {
-    return sortedRankData.map(data => [
+    return sortedRankData.map((data) => [
       data.rn,
       data.studentName,
-      ...subjects.map(s => data.subjectScores[s.id]?.toFixed(0) || '0'),
+      ...subjects.map((s) => data.subjectScores[s.id]?.toFixed(0) || '0'),
       data.total.toFixed(0),
       data.average.toFixed(2),
       data.rank,
@@ -40,38 +49,39 @@ export default function Rank() {
   };
 
   const tableHeaders = [
-    'RN', 
-    'Student Name', 
-    ...subjects.map(s => s.name), 
-    'Total', 
-    'Average', 
-    'Rank'
+    'RN',
+    'Student Name',
+    ...subjects.map((s) => s.name),
+    'Total',
+    'Average',
+    'Rank',
   ];
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <AppHeader />
 
       <div className="p-4 space-y-4">
-        {/* Page Title */}
-        <h2 className="text-xl font-semibold text-primary">Student Rank</h2>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-xl font-semibold text-primary">Student Rank</h2>
+          <p className="text-sm text-muted-foreground">
+            Showing scores from Assessments — {semesterLabel}
+          </p>
+        </div>
 
-        {/* Action Buttons */}
         <ActionButtons
           tableData={getTableData()}
           tableHeaders={tableHeaders}
           fileName="student-rank"
         />
 
-        {/* Data Table */}
         <div className="overflow-x-auto border rounded-lg">
           <table className="markbook-table">
             <thead>
               <tr>
                 <th>RN</th>
                 <th>Student Name</th>
-                {subjects.map(subject => (
+                {subjects.map((subject) => (
                   <th key={subject.id} className="bg-[hsl(142,70%,45%)]">
                     {subject.name}
                   </th>
@@ -82,11 +92,11 @@ export default function Rank() {
               </tr>
             </thead>
             <tbody>
-              {sortedRankData.map(data => (
+              {sortedRankData.map((data) => (
                 <tr key={data.studentId}>
                   <td className="font-medium">{data.rn}</td>
                   <td className="text-left">{data.studentName}</td>
-                  {subjects.map(subject => (
+                  {subjects.map((subject) => (
                     <td key={subject.id}>
                       {data.subjectScores[subject.id]?.toFixed(0) || '0'}
                     </td>

@@ -104,6 +104,15 @@
     --table-cell-edit: 45 100% 25%;
     --table-calculated: 32 100% 40%;
     --table-calculated-foreground: 0 0% 100%;
+
+    --sidebar-background: 220 20% 12%;
+    --sidebar-foreground: 210 40% 90%;
+    --sidebar-primary: 210 40% 98%;
+    --sidebar-primary-foreground: 220 20% 10%;
+    --sidebar-accent: 220 20% 20%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 220 20% 22%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
 
@@ -160,6 +169,10 @@
     @apply bg-[hsl(45,100%,70%)] text-foreground font-semibold;
   }
 
+  .dark .cell-average {
+    @apply bg-[hsl(45,100%,25%)] text-[hsl(45,100%,85%)];
+  }
+
   .cell-rank {
     @apply bg-[hsl(var(--table-calculated))] text-[hsl(var(--table-calculated-foreground))] font-bold;
   }
@@ -196,6 +209,10 @@
     @apply bg-[hsl(142,70%,85%)] px-3 py-1.5 border border-border;
   }
 
+  .dark .info-value {
+    @apply bg-[hsl(142,70%,20%)] text-[hsl(142,70%,85%)];
+  }
+
   .nav-icon {
     @apply p-3 rounded-lg transition-all hover:scale-105;
   }
@@ -214,6 +231,85 @@
 
   .score-toggle {
     @apply bg-[hsl(210,50%,85%)] px-3 py-1.5 rounded border border-border;
+  }
+
+  .payment-success-panel {
+    @apply text-center space-y-5 rounded-xl p-6;
+    border: 2px solid #22c55e;
+    background: linear-gradient(180deg, rgba(34, 197, 94, 0.14) 0%, rgba(34, 197, 94, 0.05) 100%);
+    box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.25);
+  }
+
+  .payment-success-icon-wrap {
+    @apply inline-flex items-center justify-center rounded-full p-4;
+    border: 2px solid #4ade80;
+    background: rgba(74, 222, 128, 0.18);
+    box-shadow: 0 0 24px rgba(74, 222, 128, 0.4);
+  }
+
+  .payment-success-icon {
+    @apply w-16 h-16;
+    color: #16a34a !important;
+    stroke: #16a34a !important;
+  }
+
+  .payment-success-title {
+    @apply text-2xl font-bold tracking-tight;
+    color: #16a34a !important;
+  }
+
+  .payment-success-ref-box {
+    @apply rounded-lg p-4 my-2;
+    border: 1px solid #4ade80;
+    background: rgba(255, 255, 255, 0.85);
+  }
+
+  .payment-success-label {
+    @apply text-sm font-medium;
+    color: #15803d !important;
+  }
+
+  .payment-success-ref {
+    @apply text-sm font-mono font-bold break-all;
+    color: #166534 !important;
+  }
+
+  .payment-success-message {
+    @apply text-sm font-medium;
+    color: #15803d !important;
+  }
+
+  .payment-success-btn {
+    @apply inline-flex w-full items-center justify-center gap-2 rounded-md px-8 py-3 text-sm font-semibold text-white transition-colors;
+    border: 2px solid #4ade80;
+    background-color: #22c55e !important;
+    color: #ffffff !important;
+  }
+
+  .payment-success-btn:hover {
+    background-color: #16a34a !important;
+    border-color: #22c55e;
+  }
+
+  /* Certificate report card — always light document styling (screen + print) */
+  .certificate-document {
+    @apply bg-blue-50 text-gray-900 border-blue-500;
+  }
+
+  .dark .certificate-document {
+    @apply bg-blue-50 text-gray-900;
+  }
+
+  .certificate-document .certificate-muted {
+    @apply bg-blue-100 text-gray-900;
+  }
+
+  .certificate-document .certificate-highlight {
+    @apply bg-blue-200 text-gray-900;
+  }
+
+  .certificate-document .certificate-border {
+    @apply border-gray-800;
   }
 }
 

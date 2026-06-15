@@ -22,3 +22,39 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment variables - CRITICAL: Never commit these
+.env
+.env.local
+.env.*.local
+.env.production
+.env.production.local
+
+# Secrets and private files
+secrets/
+private/
+*.pem
+*.key
+
+# Database backups and temp files
+database/backup/
+database/temp/
+*.sql.gz
+*.sql.zip
+backup/
+
+# PM2 logs and processes
+.pm2/
+pm2-logs/
+
+# OS files
+Thumbs.db
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Build cache
+.cache/
+.eslintcache

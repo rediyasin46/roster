@@ -25,7 +25,7 @@ export default function GetStarted() {
   const handleOpenChange = (open: boolean) => {
     if (!open) {
       // If user closes the dialog, go back to home
-      navigate('/home');
+      navigate('/');
     }
     setAuthOpen(open);
   };
@@ -41,7 +41,7 @@ export default function GetStarted() {
           </h1>
           <p className="text-muted-foreground text-lg">
             {authMode === 'signup'
-              ? 'Join ScoreBook today and start managing marks with ease.'
+              ? 'Join Rosterbook today and start managing marks with ease.'
               : 'Welcome back! Sign in to your account.'}
           </p>
         </div>

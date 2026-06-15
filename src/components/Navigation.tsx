@@ -5,8 +5,8 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const navItems = [
-  { path: '/home', icon: Home, label: 'Home' },
-  { path: '/', icon: FileSpreadsheet, label: 'Assessments' },
+  { path: '/', icon: Home, label: 'Home' },
+  { path: '/assessments', icon: FileSpreadsheet, label: 'Assessments' },
   { path: '/rank', icon: Trophy, label: 'Rank' },
   { path: '/roster', icon: Users, label: 'Roster' },
   { path: '/analysis', icon: BarChart3, label: 'Analysis' },

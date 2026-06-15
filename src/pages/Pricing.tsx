@@ -338,7 +338,7 @@ const Pricing = () => {
             Frequently Asked Questions
           </h3>
           <p className="text-center text-muted-foreground mb-8">
-            Everything you need to know about ScoreBook pricing.
+            Everything you need to know about Rosterbook pricing.
           </p>
           <Card className="p-2 md:p-4 rounded-2xl shadow-sm">
             <Accordion type="single" collapsible className="w-full">

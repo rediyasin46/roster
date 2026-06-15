@@ -17,7 +17,7 @@ export function ChapaDebug() {
     // Check environment variables
     const apiKey = import.meta.env.VITE_CHAPA_API_KEY;
     const baseUrl = import.meta.env.VITE_CHAPA_BASE_URL || 'https://api.chapa.co/v1';
-    const appUrl = import.meta.env.VITE_APP_URL || window.location.origin;
+    const appUrl = window.location.origin;
 
     console.log('Debug Info:', {
       apiKey: apiKey ? `${apiKey.substring(0, 20)}...` : 'NOT SET',
@@ -45,12 +45,12 @@ export function ChapaDebug() {
         body: JSON.stringify({
           amount: 100,
           currency: 'ETB',
-          email: 'test@example.com',
+          email: 'testuser@gmail.com',
           first_name: 'Test',
           last_name: 'User',
           phone_number: '+251912345678',
           tx_ref: `tx_${Date.now()}`,
-          return_url: 'http://localhost:5173/payment-success',
+          return_url: `${window.location.origin}/payment-success`,
         }),
       });
 

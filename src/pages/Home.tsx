@@ -52,7 +52,7 @@ const pricingPreview = [
 ];
 
 const testimonials = [
-  { name: "Tigist Alemu", school: "Addis Ababa Model School", quote: "ScoreBook saved me 10+ hours every term. Report cards are now a 5-minute job.", rating: 5 },
+  { name: "Tigist Alemu", school: "Addis Ababa Model School", quote: "Rosterbook saved me 10+ hours every term. Report cards are now a 5-minute job.", rating: 5 },
   { name: "Dawit Bekele", school: "Hawassa Primary School", quote: "The automatic ranking is incredibly accurate. My students love getting their certificates on time.", rating: 5 },
   { name: "Hanna Tesfaye", school: "Bahir Dar Academy", quote: "Finally a tool built for Ethiopian teachers. Payment in Birr makes everything simple.", rating: 5 },
 ];
@@ -84,7 +84,7 @@ const Home = () => {
               </div>
             </div>
             <p className="text-base md:text-lg opacity-90 mb-8 max-w-xl">
-              ScoreBook saves teachers hours of manual report card work — record marks, rank students, and print certificates in minutes.
+              Rosterbook saves teachers hours of manual report card work — record marks, rank students, and print certificates in minutes.
             </p>
             <div className="flex flex-wrap gap-3">
               <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 rounded-full font-semibold shadow-lg hover:scale-105 transition-transform">
@@ -102,7 +102,7 @@ const Home = () => {
                   <div className="w-3 h-3 rounded-full bg-destructive" />
                   <div className="w-3 h-3 rounded-full bg-accent" />
                   <div className="w-3 h-3 rounded-full bg-success" />
-                  <div className="ml-2 text-xs text-muted-foreground">ScoreBook · Grade 8A</div>
+                  <div className="ml-2 text-xs text-muted-foreground">Rosterbook · Grade 8A</div>
                 </div>
                 <div className="space-y-2">
                   <div className="grid grid-cols-5 gap-1 text-[10px] font-bold bg-[hsl(var(--table-header))] text-[hsl(var(--table-header-foreground))] p-1.5 rounded">
@@ -147,7 +147,7 @@ const Home = () => {
             Everything You Need to Manage Student Performance
           </h3>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            From mark entry to printed certificates — ScoreBook handles the full workflow.
+            From mark entry to printed certificates — Rosterbook handles the full workflow.
           </p>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -262,7 +262,7 @@ const Home = () => {
               Start Saving Time on Report Cards Today
             </h3>
             <p className="text-primary-foreground/90 mb-8 max-w-xl mx-auto">
-              Join Ethiopian teachers using ScoreBook to grade smarter, not harder.
+              Join Ethiopian teachers using Rosterbook to grade smarter, not harder.
             </p>
             <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 rounded-full font-bold text-base px-8 shadow-xl hover:scale-105 transition-transform">
               <Link to="/getstarted?mode=signup">Get Started Free <ArrowRight className="w-5 h-5" /></Link>
@@ -277,16 +277,16 @@ const Home = () => {
           <div>
             <div className="flex items-center gap-2 mb-3">
               <GraduationCap className="w-6 h-6 text-accent" />
-              <span className="font-extrabold text-lg">ScoreBook</span>
+              <span className="font-extrabold text-lg">Rosterbook</span>
             </div>
             <p className="text-sm opacity-70">Simplifying student performance management for Ethiopian teachers.</p>
           </div>
           <div>
             <h5 className="font-bold mb-3">Product</h5>
             <ul className="space-y-2 text-sm opacity-80">
-              <li><Link to="/home" className="hover:text-accent">Home</Link></li>
+              <li><Link to="/" className="hover:text-accent">Home</Link></li>
               <li><Link to="/pricing" className="hover:text-accent">Pricing</Link></li>
-              <li><Link to="/" className="hover:text-accent">Assessments</Link></li>
+              <li><Link to="/assessments" className="hover:text-accent">Assessments</Link></li>
               <li><Link to="/certificate" className="hover:text-accent">Certificates</Link></li>
             </ul>
           </div>
@@ -308,8 +308,10 @@ const Home = () => {
             </div>
           </div>
         </div>
-        <div className="max-w-7xl mx-auto mt-10 pt-6 border-t border-background/10 text-sm opacity-60 text-center">
-          © {new Date().getFullYear()} ScoreBook. All rights reserved.
+        <div className="max-w-7xl mx-auto mt-10 pt-6 border-t border-background/10 text-sm opacity-60 text-center space-y-1">
+          <p>© 2025 Rosterbook app. All rights reserved.</p>
+          <p>Developed by: Redi Yasin Umer</p>
+          <p>Phone: 0923766115</p>
         </div>
       </footer>
     </div>
