@@ -21,43 +21,46 @@ import {
   Linkedin,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/context/LanguageContext";
 
-const stats = [
-  { icon: Users, label: "Free for up to 30 Students" },
-  { icon: Award, label: "Instant Certificate Generation" },
-  { icon: Trophy, label: "Automatic Class Ranking" },
-  { icon: GraduationCap, label: "Built for Ethiopian Schools" },
-];
+const highlightIcons = [Users, Award, Trophy, GraduationCap];
 
-const features = [
-  { icon: FileSpreadsheet, title: "Easy Mark Entry", desc: "Excel-like inline editing with smart navigation. Enter marks fast, without modals." },
-  { icon: Trophy, title: "Automatic Ranking & Grading", desc: "Rankings and grade letters update instantly as you enter scores." },
-  { icon: Award, title: "Certificates & Report Cards", desc: "Generate professional, print-ready report cards and certificates in one click." },
-  { icon: Layers, title: "Flexible Subscription Plans", desc: "Free for small classes. Affordable monthly plans in Ethiopian Birr." },
-  { icon: Cloud, title: "Cloud-Based Access", desc: "Your data is safely stored in the cloud. Access from any device, anywhere." },
-  { icon: GraduationCap, title: "Ethiopian Curriculum Ready", desc: "Designed around real Ethiopian school reporting needs and standards." },
-];
-
-const steps = [
-  { n: 1, title: "Sign Up", desc: "Create your free account in seconds." },
-  { n: 2, title: "Enter Marks", desc: "Add students and scores in a familiar spreadsheet view." },
-  { n: 3, title: "Generate Reports", desc: "Download rankings, report cards, and certificates instantly." },
-];
-
-const pricingPreview = [
-  { name: "Starter", price: "0", limit: "30 students", highlights: ["Mark entry", "Ranking"] },
-  { name: "Growth", price: "50", limit: "80 students", highlights: ["Certificates", "Branding"], popular: true },
-  { name: "Pro", price: "100", limit: "150 students", highlights: ["Bulk export", "Priority support"] },
-  { name: "Premium", price: "200", limit: "300 students", highlights: ["Analytics", "Custom templates"] },
-];
-
-const testimonials = [
-  { name: "Tigist Alemu", school: "Addis Ababa Model School", quote: "Rosterbook saved me 10+ hours every term. Report cards are now a 5-minute job.", rating: 5 },
-  { name: "Dawit Bekele", school: "Hawassa Primary School", quote: "The automatic ranking is incredibly accurate. My students love getting their certificates on time.", rating: 5 },
-  { name: "Hanna Tesfaye", school: "Bahir Dar Academy", quote: "Finally a tool built for Ethiopian teachers. Payment in Birr makes everything simple.", rating: 5 },
-];
+const featureIcons = [FileSpreadsheet, Trophy, Award, Layers, Cloud, GraduationCap];
 
 const Home = () => {
+  const { t, tRaw } = useLanguage();
+
+  const highlights = [
+    t('highlights.freeStudents'),
+    t('highlights.certificates'),
+    t('highlights.ranking'),
+    t('highlights.ethiopian'),
+  ];
+
+  const features = [
+    { icon: FileSpreadsheet, title: t('features.markEntry.title'),    desc: t('features.markEntry.desc') },
+    { icon: Trophy,          title: t('features.ranking.title'),      desc: t('features.ranking.desc') },
+    { icon: Award,           title: t('features.certificates.title'), desc: t('features.certificates.desc') },
+    { icon: Layers,          title: t('features.plans.title'),        desc: t('features.plans.desc') },
+    { icon: Cloud,           title: t('features.cloud.title'),        desc: t('features.cloud.desc') },
+    { icon: GraduationCap,   title: t('features.curriculum.title'),   desc: t('features.curriculum.desc') },
+  ];
+
+  const steps = [
+    { n: 1, title: t('howItWorks.step1.title'), desc: t('howItWorks.step1.desc') },
+    { n: 2, title: t('howItWorks.step2.title'), desc: t('howItWorks.step2.desc') },
+    { n: 3, title: t('howItWorks.step3.title'), desc: t('howItWorks.step3.desc') },
+  ];
+
+  const pricingPreview = [
+    { name: t('pricing.plans.starter.name'),      price: '0',   limit: t('pricing.plans.starter.limit'),      highlights: [t('assessments.addStudent'), t('rank.pageTitle')] },
+    { name: t('pricing.plans.growth.name'),       price: '50',  limit: t('pricing.plans.growth.limit'),       highlights: [t('nav.certificate'), t('features.plans.title')], popular: true },
+    { name: t('pricing.plans.professional.name'), price: '100', limit: t('pricing.plans.professional.limit'), highlights: [t('assessments.exportExcel'), t('rank.pageTitle')] },
+    { name: t('pricing.plans.premium.name'),      price: '200', limit: t('pricing.plans.premium.limit'),      highlights: [t('nav.analysis'), t('features.certificates.title')] },
+  ];
+
+  const testimonials = tRaw<{ name: string; school: string; quote: string }[]>('testimonials.items');
+
   return (
     <div className="min-h-screen bg-background">
       <AppHeader />
@@ -69,29 +72,29 @@ const Home = () => {
         <div className="relative max-w-7xl mx-auto px-6 py-16 md:py-24 flex flex-col gap-10">
           <div className="text-primary-foreground animate-fade-in">
             <Badge className="bg-accent text-accent-foreground hover:bg-accent mb-4 gap-1">
-              <Sparkles className="w-3 h-3" /> Built for Ethiopian Teachers
+              <Sparkles className="w-3 h-3" /> {t('hero.badge')}
             </Badge>
             <div>
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight mb-6 animate-text-slide">
-                Simplify Mark Entry:-
+                {t('hero.headline')}
               </h2>
               <div className="overflow-hidden w-full bg-gradient-to-r from-transparent via-primary-foreground to-transparent py-4">
                 <div className="flex gap-8 animate-marquee">
-                  <span className="text-2xl md:text-3xl font-bold text-accent whitespace-nowrap flex-shrink-0">Ranking, Roster, Analysis and Certificate Generation.</span>
-                  <span className="text-2xl md:text-3xl font-bold text-accent whitespace-nowrap flex-shrink-0">Ranking, Roster, Analysis and Certificate Generation.</span>
-                  <span className="text-2xl md:text-3xl font-bold text-accent whitespace-nowrap flex-shrink-0">Ranking, Roster, Analysis and Certificate Generation.</span>
+                  <span className="text-2xl md:text-3xl font-bold text-accent whitespace-nowrap flex-shrink-0">{t('hero.marquee')}</span>
+                  <span className="text-2xl md:text-3xl font-bold text-accent whitespace-nowrap flex-shrink-0">{t('hero.marquee')}</span>
+                  <span className="text-2xl md:text-3xl font-bold text-accent whitespace-nowrap flex-shrink-0">{t('hero.marquee')}</span>
                 </div>
               </div>
             </div>
             <p className="text-base md:text-lg opacity-90 mb-8 max-w-xl">
-              Rosterbook saves teachers hours of manual report card work — record marks, rank students, and print certificates in minutes.
+              {t('hero.description')}
             </p>
             <div className="flex flex-wrap gap-3">
               <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 rounded-full font-semibold shadow-lg hover:scale-105 transition-transform">
-                <Link to="/getstarted?mode=signup">Get Started Free <ArrowRight className="w-4 h-4" /></Link>
+                <Link to="/getstarted?mode=signup">{t('hero.ctaPrimary')} <ArrowRight className="w-4 h-4" /></Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="rounded-full border-2 border-white bg-transparent text-white hover:bg-white hover:text-primary font-semibold">
-                <Link to="/getstarted?mode=signin">Sign In</Link>
+                <Link to="/getstarted?mode=signin">{t('hero.ctaSecondary')}</Link>
               </Button>
             </div>
           </div>
@@ -102,11 +105,11 @@ const Home = () => {
                   <div className="w-3 h-3 rounded-full bg-destructive" />
                   <div className="w-3 h-3 rounded-full bg-accent" />
                   <div className="w-3 h-3 rounded-full bg-success" />
-                  <div className="ml-2 text-xs text-muted-foreground">Rosterbook · Grade 8A</div>
+                  <div className="ml-2 text-xs text-muted-foreground">{t('demoTable.label')}</div>
                 </div>
                 <div className="space-y-2">
                   <div className="grid grid-cols-5 gap-1 text-[10px] font-bold bg-[hsl(var(--table-header))] text-[hsl(var(--table-header-foreground))] p-1.5 rounded">
-                    <div>RN</div><div className="col-span-2">Name</div><div>Avg</div><div>Rank</div>
+                    <div>{t('demoTable.rn')}</div><div className="col-span-2">{t('demoTable.name')}</div><div>{t('demoTable.avg')}</div><div>{t('demoTable.rank')}</div>
                   </div>
                   {[
                     ["1", "Abebe T.", "92", "1"],
@@ -128,12 +131,12 @@ const Home = () => {
       {/* Stats / Trust */}
       <section className="max-w-7xl mx-auto px-6 -mt-8 md:-mt-12 relative z-10">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {stats.map(({ icon: Icon, label }, i) => (
+          {highlightIcons.map((Icon, i) => (
             <Card key={i} className="p-4 flex items-center gap-3 rounded-2xl shadow-lg hover:-translate-y-1 transition-transform">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
                 <Icon className="w-5 h-5" />
               </div>
-              <span className="text-sm font-semibold">{label}</span>
+              <span className="text-sm font-semibold">{highlights[i]}</span>
             </Card>
           ))}
         </div>
@@ -142,12 +145,12 @@ const Home = () => {
       {/* Features */}
       <section className="max-w-7xl mx-auto px-6 py-20">
         <div className="text-center mb-12">
-          <Badge className="bg-primary/10 text-primary hover:bg-primary/10 border-0 mb-3">Features</Badge>
+          <Badge className="bg-primary/10 text-primary hover:bg-primary/10 border-0 mb-3">{t('features.sectionBadge')}</Badge>
           <h3 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3">
-            Everything You Need to Manage Student Performance
+            {t('features.sectionTitle')}
           </h3>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            From mark entry to printed certificates — Rosterbook handles the full workflow.
+            {t('features.sectionDesc')}
           </p>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -167,8 +170,8 @@ const Home = () => {
       <section className="bg-muted/40 py-20">
         <div className="max-w-5xl mx-auto px-6">
           <div className="text-center mb-12">
-            <Badge className="bg-accent/20 text-accent-foreground hover:bg-accent/20 border-0 mb-3">How It Works</Badge>
-            <h3 className="text-3xl md:text-4xl font-extrabold tracking-tight">Three Simple Steps</h3>
+            <Badge className="bg-accent/20 text-accent-foreground hover:bg-accent/20 border-0 mb-3">{t('howItWorks.sectionBadge')}</Badge>
+            <h3 className="text-3xl md:text-4xl font-extrabold tracking-tight">{t('howItWorks.sectionTitle')}</h3>
           </div>
           <div className="relative grid md:grid-cols-3 gap-8">
             <div className="hidden md:block absolute top-8 left-[16%] right-[16%] h-0.5 bg-gradient-to-r from-primary via-accent to-primary" />
@@ -188,9 +191,9 @@ const Home = () => {
       {/* Pricing preview */}
       <section className="max-w-7xl mx-auto px-6 py-20">
         <div className="text-center mb-12">
-          <Badge className="bg-primary/10 text-primary hover:bg-primary/10 border-0 mb-3">Pricing</Badge>
-          <h3 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3">Plans for Every Classroom</h3>
-          <p className="text-muted-foreground">Pay in Ethiopian Birr. Cancel anytime.</p>
+          <Badge className="bg-primary/10 text-primary hover:bg-primary/10 border-0 mb-3">{t('pricing.sectionBadge')}</Badge>
+          <h3 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3">{t('pricing.sectionTitle')}</h3>
+          <p className="text-muted-foreground">{t('pricing.sectionDesc')}</p>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {pricingPreview.map((p) => (
@@ -217,7 +220,7 @@ const Home = () => {
         </div>
         <div className="text-center mt-8">
           <Button asChild size="lg" variant="outline" className="rounded-full font-semibold">
-            <Link to="/pricing">View Full Pricing <ArrowRight className="w-4 h-4" /></Link>
+            <Link to="/pricing">{t('pricing.viewFull')} <ArrowRight className="w-4 h-4" /></Link>
           </Button>
         </div>
       </section>
@@ -226,25 +229,25 @@ const Home = () => {
       <section className="bg-muted/40 py-20">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-12">
-            <Badge className="bg-accent/20 text-accent-foreground hover:bg-accent/20 border-0 mb-3">Testimonials</Badge>
-            <h3 className="text-3xl md:text-4xl font-extrabold tracking-tight">Loved by Ethiopian Teachers</h3>
+            <Badge className="bg-accent/20 text-accent-foreground hover:bg-accent/20 border-0 mb-3">{t('testimonials.sectionBadge')}</Badge>
+            <h3 className="text-3xl md:text-4xl font-extrabold tracking-tight">{t('testimonials.sectionTitle')}</h3>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
-            {testimonials.map((t, i) => (
+            {testimonials.map((t_item, i) => (
               <Card key={i} className="p-6 rounded-2xl shadow-md hover:shadow-xl transition-shadow">
                 <div className="flex gap-0.5 mb-3 text-accent">
-                  {Array.from({ length: t.rating }).map((_, j) => (
+                  {Array.from({ length: 5 }).map((_, j) => (
                     <Star key={j} className="w-4 h-4 fill-current" />
                   ))}
                 </div>
-                <p className="text-sm mb-4 italic">"{t.quote}"</p>
+                <p className="text-sm mb-4 italic">"{t_item.quote}"</p>
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-primary-foreground font-bold">
-                    {t.name.charAt(0)}
+                    {t_item.name.charAt(0)}
                   </div>
                   <div>
-                    <div className="font-semibold text-sm">{t.name}</div>
-                    <div className="text-xs text-muted-foreground">{t.school}</div>
+                    <div className="font-semibold text-sm">{t_item.name}</div>
+                    <div className="text-xs text-muted-foreground">{t_item.school}</div>
                   </div>
                 </div>
               </Card>
@@ -259,13 +262,13 @@ const Home = () => {
           <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_70%_30%,white,transparent_50%)]" />
           <div className="relative">
             <h3 className="text-3xl md:text-5xl font-extrabold text-primary-foreground mb-4 tracking-tight">
-              Start Saving Time on Report Cards Today
+              {t('cta.title')}
             </h3>
             <p className="text-primary-foreground/90 mb-8 max-w-xl mx-auto">
-              Join Ethiopian teachers using Rosterbook to grade smarter, not harder.
+              {t('cta.desc')}
             </p>
             <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 rounded-full font-bold text-base px-8 shadow-xl hover:scale-105 transition-transform">
-              <Link to="/getstarted?mode=signup">Get Started Free <ArrowRight className="w-5 h-5" /></Link>
+              <Link to="/getstarted?mode=signup">{t('cta.button')} <ArrowRight className="w-5 h-5" /></Link>
             </Button>
           </div>
         </div>
@@ -277,29 +280,29 @@ const Home = () => {
           <div>
             <div className="flex items-center gap-2 mb-3">
               <GraduationCap className="w-6 h-6 text-accent" />
-              <span className="font-extrabold text-lg">Rosterbook</span>
+              <span className="font-extrabold text-lg">{t('brand.name')}</span>
             </div>
-            <p className="text-sm opacity-70">Simplifying student performance management for Ethiopian teachers.</p>
+            <p className="text-sm opacity-70">{t('footer.desc')}</p>
           </div>
           <div>
-            <h5 className="font-bold mb-3">Product</h5>
+            <h5 className="font-bold mb-3">{t('footer.product')}</h5>
             <ul className="space-y-2 text-sm opacity-80">
-              <li><Link to="/" className="hover:text-accent">Home</Link></li>
-              <li><Link to="/pricing" className="hover:text-accent">Pricing</Link></li>
-              <li><Link to="/assessments" className="hover:text-accent">Assessments</Link></li>
-              <li><Link to="/certificate" className="hover:text-accent">Certificates</Link></li>
+              <li><Link to="/" className="hover:text-accent">{t('footer.links.home')}</Link></li>
+              <li><Link to="/pricing" className="hover:text-accent">{t('footer.links.pricing')}</Link></li>
+              <li><Link to="/assessments" className="hover:text-accent">{t('footer.links.assessments')}</Link></li>
+              <li><Link to="/certificate" className="hover:text-accent">{t('footer.links.certificates')}</Link></li>
             </ul>
           </div>
           <div>
-            <h5 className="font-bold mb-3">Company</h5>
+            <h5 className="font-bold mb-3">{t('footer.company')}</h5>
             <ul className="space-y-2 text-sm opacity-80">
-              <li><a className="hover:text-accent" href="#">About</a></li>
-              <li><a className="hover:text-accent" href="#">Contact</a></li>
-              <li><a className="hover:text-accent" href="#">Privacy</a></li>
+              <li><a className="hover:text-accent" href="#">{t('footer.links.about')}</a></li>
+              <li><a className="hover:text-accent" href="#">{t('footer.links.contact')}</a></li>
+              <li><a className="hover:text-accent" href="#">{t('footer.links.privacy')}</a></li>
             </ul>
           </div>
           <div>
-            <h5 className="font-bold mb-3">Follow</h5>
+            <h5 className="font-bold mb-3">{t('footer.follow')}</h5>
             <div className="flex gap-3">
               <a href="#" className="w-9 h-9 rounded-full bg-background/10 hover:bg-accent hover:text-accent-foreground flex items-center justify-center transition-colors"><Facebook className="w-4 h-4" /></a>
               <a href="#" className="w-9 h-9 rounded-full bg-background/10 hover:bg-accent hover:text-accent-foreground flex items-center justify-center transition-colors"><Twitter className="w-4 h-4" /></a>
@@ -309,8 +312,8 @@ const Home = () => {
           </div>
         </div>
         <div className="max-w-7xl mx-auto mt-10 pt-6 border-t border-background/10 text-sm opacity-60 text-center space-y-1">
-          <p>© 2025 Rosterbook app. All rights reserved.</p>
-          <p>Developed by: Redi Yasin Umer</p>
+          <p>{t('brand.copyright')}</p>
+          <p>{t('brand.developer')}</p>
           <p>Phone: 0923766115</p>
         </div>
       </footer>

@@ -97,30 +97,134 @@ const CertificateDetail = () => {
         <div className="relative">
           <section className="certificate-document p-8 min-h-screen flex flex-col justify-center print:page-break-after border-4">
             <div className="text-center space-y-1 mb-8">
-              <p className="text-xs">በጉ/ቶ/ቀ/መ/በስልጤ ዞን በስልጤ ዞን ያሸር ክትበት ጋር</p>
-              <p className="text-xs">በማዕ/ኢ/ክ/መ/ በስልጤ ዞን ትምህርት ቤቶች ጽ/ቤት</p>
-              <h2 className="font-bold text-lg">C/E/R/S/Siltie Zone Education Office</h2>
+              <p className="text-lg">በጉ/ቶ/ቀ/መ/በስልጤ ዞን በስልጤ ዞን ያሸር ክትበት ጋር</p>
+              <p className="text-lg">በማዕ/ኢ/ክ/መ/ በስልጤ ዞን ትምህርት ቤቶች ጽ/ቤት</p>
+              <h2 className="font-bold text-xl">C/E/R/S/Siltie Zone Education Office</h2>
               <div className="flex justify-center my-4">
                 <div className="w-16 h-16 border-2 certificate-border rounded-full flex items-center justify-center">
                   <span className="text-xs font-bold text-center">School<br/>Seal</span>
                 </div>
               </div>
-              <h3 className="font-bold text-2xl mt-4">የስልጤ ወጣት ካርድ</h3>
-              <h3 className="font-bold text-2xl">Student Report Card</h3>
+              <h3 className="font-bold text-2xl mt-4">የደረሳይ ውጣት ካርድ</h3>
+              <h3 className="font-bold text-xl">የተማሪው ውጤት መግለጫ</h3>
+              <h3 className="font-bold text-xl">Student Report Card</h3>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 mt-8">
-              <Field label="School Name" value={schoolInfo.school} />
-              <Field label="Kebele" value={student.kebele || ""} />
-              <Field label="Name of Student" value={student.name} />
-              <Field label="Sex" value={student.sex || ""} />
-              <Field label="Age" value={student.age || ""} />
-              <Field label="Higher/Farmers Asso." value={student.village || ""} />
-              <Field label="Academic Year" value={student.year || schoolInfo.year} />
-              <Field label="Class" value={schoolInfo.grade || schoolInfo.class || ""} />
-              <Field label="Promoted To" value="" />
-              <Field label="Directors Name" value="" />
-              <Field label="Signature" value="" />
+            <div className="space-y-3 text-lg">
+              <div>
+                <div className="flex items-end gap-2">
+                  <span className="font-medium whitespace-nowrap">የመድረሳይ ሱም</span>
+                  <span className="flex-1 border-b border-black pb-0.5">{schoolInfo.school || ""}</span>
+                  <span className="font-medium whitespace-nowrap">ቀበሌ</span>
+                </div>
+                <div>School Name{schoolInfo.school || ""}</div>
+              </div>
+              <div>
+                <div className="flex items-end gap-2">
+                  <span className="font-medium whitespace-nowrap">ት/ቤቱ ስም</span>
+                  <span className="flex-1 border-b border-black pb-0.5">{student.kebele || ""}</span>
+                </div>
+                <div>Kebele{student.kebele || ""}</div>
+              </div>
+              <div>
+                <div className="flex items-end gap-2">
+                  <span className="font-medium whitespace-nowrap">የደረሳይ ሱም</span>
+                  <span className="flex-1 border-b border-black pb-0.5">{student.name || ""}</span>
+                </div>
+                <div>Name of Student{student.name || ""}</div>
+              </div>
+              <div>
+                <div className="flex items-end gap-2">
+                  <span className="font-medium whitespace-nowrap">የተማሪው/ዋ/ ስም</span>
+                  <span className="flex-1 border-b border-black pb-0.5"></span>
+                </div>
+              </div>
+              <div className="flex gap-4">
+                <div className="flex-1">
+                  <div className="flex items-end gap-2">
+                    <span className="font-medium whitespace-nowrap">ል.ገ</span>
+                    <span className="flex-1 border-b border-black pb-0.5">{student.sex || ""}</span>
+                    <span className="font-medium whitespace-nowrap">ኡምር</span>
+                    <span className="flex-1 border-b border-black pb-0.5">{student.age || ""}</span>
+                  </div>
+                  <div className="flex gap-4">
+                    <span>Sex</span>
+                    <span>Age</span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex gap-4">
+                <div className="flex-1">
+                  <div className="flex items-end gap-2">
+                    <span className="font-medium whitespace-nowrap">ከፍተኛ/ገበሬ ማህበር</span>
+                    <span className="flex-1 border-b border-black pb-0.5">{student.village || ""}</span>
+                    <span className="font-medium whitespace-nowrap">ቀበሌ</span>
+                    <span className="flex-1 border-b border-black pb-0.5"></span>
+                  </div>
+                  <div className="flex gap-4">
+                    <span>Higher/Farmers Asso.</span>
+                    <span>Kebele</span>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div className="flex items-end gap-2">
+                  <span className="font-medium whitespace-nowrap">የአሸር ዘማን</span>
+                  <span className="flex-1 border-b border-black pb-0.5">{student.year || schoolInfo.year || ""}</span>
+                </div>
+                <div>Academic Year{student.year || schoolInfo.year || ""}</div>
+              </div>
+              <div>
+                <div className="flex items-end gap-2">
+                  <span className="font-medium whitespace-nowrap">የትምህር ዘመን</span>
+                  <span className="flex-1 border-b border-black pb-0.5">{student.year || schoolInfo.year || ""}</span>
+                </div>
+                <div>Academic Year{student.year || schoolInfo.year || ""}</div>
+              </div>
+              <div>
+                <div className="flex items-end gap-2">
+                  <span className="font-medium whitespace-nowrap">ጎልጌ</span>
+                  <span className="flex-1 border-b border-black pb-0.5">{schoolInfo.grade || schoolInfo.class || ""}</span>
+                </div>
+                <div>Class{schoolInfo.grade || schoolInfo.class || ""}</div>
+              </div>
+              <div>
+                <div className="flex items-end gap-2">
+                  <span className="font-medium whitespace-nowrap">ክፍት</span>
+                  <span className="flex-1 border-b border-black pb-0.5"></span>
+                </div>
+              </div>
+              <div>
+                <div className="flex items-end gap-2">
+                  <span className="font-medium whitespace-nowrap">የ/ወደ</span>
+                  <span>ጎልጌ ኤት አለፋን(ታት)ክፍል ተዘዋውራል/ለች</span>
+                </div>
+                <div>Promoted To</div>
+              </div>
+              <div className="flex gap-4">
+                <div className="flex-1">
+                  <div className="flex items-end gap-2">
+                    <span className="font-medium whitespace-nowrap">የኡስታዚ ሱም</span>
+                    <span className="flex-1 border-b border-black pb-0.5"></span>
+                    <span className="font-medium whitespace-nowrap">መልከት</span>
+                    <span className="flex-1 border-b border-black pb-0.5"></span>
+                  </div>
+                  <div className="flex gap-4">
+                    <span>Directors Name</span>
+                    <span>Signature</span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex gap-4">
+                <div className="flex-1">
+                  <div className="flex items-end gap-2">
+                    <span className="font-medium whitespace-nowrap">የርዕሰ መምህሩ ስም</span>
+                    <span className="flex-1 border-b border-black pb-0.5"></span>
+                    <span className="font-medium whitespace-nowrap">ፊርማ</span>
+                    <span className="flex-1 border-b border-black pb-0.5"></span>
+                  </div>
+                </div>
+              </div>
             </div>
           </section>
           <div className="absolute -bottom-6 right-8 text-lg font-bold text-blue-600 print:text-blue-600">Page 1</div>
@@ -129,30 +233,46 @@ const CertificateDetail = () => {
         {/* PAGE 2: Method of Marking */}
         <div className="relative">
           <section className="certificate-document p-8 min-h-screen flex flex-col justify-center print:page-break-after print:page-break-before border-4">
-            <h3 className="text-center font-bold text-xl underline mb-6">METHOD OF MARKING</h3>
+            <h3 className="text-center font-bold text-2xl underline mb-6">ማርክ ያቦት ሃለት</h3>
+            <h3 className="text-center font-bold text-2xl underline mb-8">የማርክ አሰጣጥ ደንብ</h3>
             
-            <div className="space-y-6 text-sm">
-              <p className="text-center font-semibold">Student's achievement in each class will be assigned the following values.</p>
+            <div className="space-y-6 text-lg">
+              <p className="text-justify">
+                ትምህርት ቤቶች በመዝገብ ውስጥ የሚጽፏቸው ተማሪዎች
+              </p>
+              <p className="text-justify mb-6">
+                የትምህርት ደረጃ በሚከተለው አይነት ይመደባል፡፡
+              </p>
               
-              <div className="certificate-muted p-6 rounded space-y-2">
-                <p className="font-semibold">Grading Scale:</p>
-                <ul className="space-y-2 ml-4">
-                  <li className="flex justify-between"><span>90 - 100%</span> <span className="font-semibold">Excellent</span></li>
-                  <li className="flex justify-between"><span>80 - 89%</span> <span className="font-semibold">Very Good</span></li>
-                  <li className="flex justify-between"><span>60 - 79%</span> <span className="font-semibold">Satisfactory</span></li>
-                  <li className="flex justify-between"><span>50 - 59%</span> <span className="font-semibold">Fair</span></li>
-                  <li className="flex justify-between"><span>Below 50%</span> <span className="font-semibold">Poor & Failure</span></li>
-                </ul>
-              </div>
+              <ul className="space-y-2 ml-8 mb-8">
+                <li>90 -100% ያገኘ እጅግ በጣም ጥሩ/የረከበ ስረም ስረም ፊያን</li>
+                <li>80 — 89% ያገኘ በጣም ጥሩ/የረከበ ስረም ፊያን</li>
+                <li>60 — 79% ያገኘ በቂ/የረከበ ፊያን</li>
+                <li>50 — 59% ያገኘ መጠነኛ/የረከበ ልከኛን</li>
+                <li>50% በታች ያገኘ ዝቅተኛ/ኮሎ የረከበ ህርከተኛን</li>
+              </ul>
+              
+              <p className="text-justify">
+                ከመቶ ዜሮ (0%) ምንምጊዜ ቢሆን ለተማሪ አይሰጥም. ዜሮ መስጠት ፈጽሞ አልተማረም ማለት ነው፡፡ ተማሪው ከክፍሉ ያልተገኘ እንደሆነ አልነበረም ተብሎ ይፃፋል፡፡
+              </p>
 
-              <div className="space-y-3">
-                <p className="font-semibold">Important Notes:</p>
-                <p>
-                  A mark zero (0%) should never be given, since it would mean no work has been done absolutely. 
-                  If a student has been absent from class for whole period and has not made up any of the work 
-                  he/she should be marked "AB" for absent.
-                </p>
-              </div>
+              <h3 className="text-center font-bold text-2xl underline mt-12 mb-6">METHOD OF MARKING</h3>
+              
+              <p className="text-justify mb-4">
+                Student's achievement in each class will be assigned the following values.
+              </p>
+
+              <ul className="space-y-2 ml-8 mb-6">
+                <li>90 - 100% Excellent</li>
+                <li>80 – 89% Very good</li>
+                <li>60 – 79% Satisfactory</li>
+                <li>50 – 59% Fair</li>
+                <li>Below 50% Poor & Failure</li>
+              </ul>
+
+              <p className="text-justify">
+                A mark zero (0%) should never be given, since it would mean no work has should been done absolutely. If a student has been absent from class for whole period and has not made up any of the work he/she should be marked “AB” for absent
+              </p>
             </div>
           </section>
           <div className="absolute -bottom-6 right-8 text-lg font-bold text-blue-600 print:text-blue-600">Page 2</div>
@@ -161,82 +281,122 @@ const CertificateDetail = () => {
         {/* PAGE 3: Subjects / Marks Table */}
         <div className="relative">
           <section className="certificate-document p-8 min-h-screen flex flex-col print:page-break-after print:page-break-before border-4">
-            <h3 className="text-center font-bold text-lg mb-4">Academic Performance - All Subjects</h3>
-            
-            <table className="w-full border-collapse text-sm mb-6">
+            <table className="w-full border-collapse text-base">
               <thead>
-                <tr className="certificate-muted">
-                  <th className="border certificate-border p-3 text-left font-bold">Subject</th>
-                  <th className="border certificate-border p-3 font-bold text-center">1st Semester</th>
-                  <th className="border certificate-border p-3 font-bold text-center">2nd Semester</th>
-                  <th className="border certificate-border p-3 font-bold text-center">Average</th>
+                <tr className="bg-gray-100">
+                  <th className="border border-black p-2 text-left font-bold">
+                    <div>የአሸር ዓይነት</div>
+                    <div>የትምህርት አይነት</div>
+                    <div>Subject</div>
+                  </th>
+                  <th className="border border-black p-2 text-center font-bold">
+                    <div>አደኛ የአሸር ወከት</div>
+                    <div>1ኛ የትም/ወቅት</div>
+                    <div>1st Semester</div>
+                  </th>
+                  <th className="border border-black p-2 text-center font-bold">
+                    <div>2ኛ የአሸር ወከት</div>
+                    <div>2ኛየትም/ወቅት</div>
+                    <div>2nd Semester</div>
+                  </th>
+                  <th className="border border-black p-2 text-center font-bold">
+                    <div>ውጤት</div>
+                    <div>አ/ውጤት</div>
+                    <div>Average</div>
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {subjects.map((sub) => {
-                  const firstScore = hasFirstSemester
-                    ? getStudentSemesterScore(student.id, sub.id, '1st')
+                {[
+                  "አማርኛ/Amharic",
+                  "ሰልጥኛ/Seltigna",
+                  "እንግሊዘኛ/English",
+                  "ሒሳብ/Mathematics",
+                  "የአካላይንስ/ያዝጋግ ሳ/Educational science",
+                  "ጀ/ሳይንስ/G.science",
+                  "Career&Techniq Edu",
+                  "ሀግረተሰብ ሳ/Social Study",
+                  "ሲትዝሽን/ Citizenship",
+                  "ስነ—አህላች/ግብረ ገብ",
+                  "የእዉኔዋየልስን ስነ ሉብ (Art)",
+                  "ኢንቴክኖሎጂ/ ICT",
+                  "Per/nce visual art(PVA)",
+                  "ጂኦግራፊ/Geography",
+                  "የጅስም ማቆመሬ/Ph. Education",
+                  "ጠባይ/Conduct",
+                  "የቀረበት ቀን/Absent",
+                  "ጠ/ውጤት/ፒ/Grad"
+                ].map((subject, index) => {
+                  const subjectData = subjects[index];
+                  const firstScore = subjectData && hasFirstSemester
+                    ? getStudentSemesterScore(student.id, subjectData.id, '1st')
                     : 0;
-                  const secondScore = hasSecondSemester
-                    ? getStudentSemesterScore(student.id, sub.id, '2nd')
+                  const secondScore = subjectData && hasSecondSemester
+                    ? getStudentSemesterScore(student.id, subjectData.id, '2nd')
                     : 0;
-                  const average = getSubjectAverage(sub.id);
-
+                  const average = subjectData ? getSubjectAverage(subjectData.id) : 0;
+                  
                   return (
-                    <tr key={sub.id} className="hover:bg-blue-100/50">
-                      <td className="border certificate-border p-3">{sub.name}</td>
-                      <td className="border certificate-border p-3 text-center">
-                        {hasFirstSemester ? formatScore(firstScore) : '-'}
+                    <tr key={index}>
+                      <td className="border border-black p-2">{subject}</td>
+                      <td className="border border-black p-2 text-center">
+                        {subjectData && hasFirstSemester ? formatScore(firstScore) : ''}
                       </td>
-                      <td className="border certificate-border p-3 text-center">
-                        {hasSecondSemester ? formatScore(secondScore) : '-'}
+                      <td className="border border-black p-2 text-center">
+                        {subjectData && hasSecondSemester ? formatScore(secondScore) : ''}
                       </td>
-                      <td className="border certificate-border p-3 text-center font-semibold">
-                        {average > 0 ? average.toFixed(0) : ''}
+                      <td className="border border-black p-2 text-center">
+                        {subjectData && average > 0 ? average.toFixed(0) : ''}
                       </td>
                     </tr>
                   );
                 })}
-                <tr className="certificate-highlight font-semibold">
-                  <td className="border certificate-border p-3 font-bold">Average</td>
-                  <td className="border certificate-border p-3 text-center text-lg font-bold">
-                    {hasFirstSemester ? firstSemesterAvg.toFixed(1) : '-'}
+                <tr className="font-semibold">
+                  <td className="border border-black p-2 font-bold">
+                    <div>አማካይ ውጤት/Average</div>
                   </td>
-                  <td className="border certificate-border p-3 text-center text-lg font-bold">
-                    {hasSecondSemester ? secondSemesterAvg.toFixed(1) : '-'}
+                  <td className="border border-black p-2 text-center font-bold">
+                    {hasFirstSemester ? firstSemesterAvg.toFixed(1) : ''}
                   </td>
-                  <td className="border certificate-border p-3 text-center text-lg font-bold">
+                  <td className="border border-black p-2 text-center font-bold">
+                    {hasSecondSemester ? secondSemesterAvg.toFixed(1) : ''}
+                  </td>
+                  <td className="border border-black p-2 text-center font-bold">
                     {overallAvg.toFixed(1)}
                   </td>
                 </tr>
-                <tr className="certificate-highlight font-semibold">
-                  <td className="border certificate-border p-3 font-bold">Rank</td>
-                  <td className="border certificate-border p-3 text-center text-lg font-bold">
-                    {hasFirstSemester ? firstSemesterRank : '-'}
+                <tr className="font-semibold">
+                  <td className="border border-black p-2 font-bold">
+                    <div>ክፍል ደረጃ/Rank</div>
                   </td>
-                  <td className="border certificate-border p-3 text-center text-lg font-bold">
-                    {hasSecondSemester ? secondSemesterRank : '-'}
+                  <td className="border border-black p-2 text-center font-bold">
+                    {hasFirstSemester ? firstSemesterRank : ''}
                   </td>
-                  <td className="border certificate-border p-3 text-center text-lg font-bold">
+                  <td className="border border-black p-2 text-center font-bold">
+                    {hasSecondSemester ? secondSemesterRank : ''}
+                  </td>
+                  <td className="border border-black p-2 text-center font-bold">
                     {overallRankDisplay}
                   </td>
                 </tr>
               </tbody>
             </table>
 
-            <div className="mt-auto grid grid-cols-3 gap-4 text-xs">
-              <div className="text-center">
-                <div className="border-b certificate-border h-8 mb-2"></div>
-                <p>School Seal</p>
+            <div className="mt-8 flex justify-between text-base">
+              <div>
+                <span>የት/ቤቱ ማህተም</span>________________________
               </div>
-              <div className="text-center">
-                <div className="border-b certificate-border h-8 mb-2"></div>
-                <p>Director Name</p>
+              <div>
+                <span>የርዕሰ መምህሩ ስም</span>________________________
               </div>
-              <div className="text-center">
-                <div className="border-b certificate-border h-8 mb-2"></div>
-                <p>Director Signature</p>
+              <div>
+                <span>የርዕሰ መምህሩ ፊርማ</span>________________________
               </div>
+            </div>
+            <div className="flex justify-between text-base">
+              <div>School Seal</div>
+              <div>Director Name</div>
+              <div>Director Signature</div>
             </div>
           </section>
           <div className="absolute -bottom-6 right-8 text-lg font-bold text-blue-600 print:text-blue-600">Page 3</div>
@@ -245,44 +405,99 @@ const CertificateDetail = () => {
         {/* PAGE 4: Remarks From Teachers */}
         <div className="relative">
           <section className="certificate-document p-8 min-h-screen flex flex-col print:page-break-before border-4">
-            <h3 className="text-center font-bold text-lg mb-8">Remarks From Home — Room Teacher</h3>
+            <h3 className="text-center font-bold text-2xl mb-2">
+              የጎልጌይ አሸር ጌተ ሽዢ
+            </h3>
+            <h3 className="text-center font-bold text-2xl mb-6">
+              የክፍሉ መምህር አስተያየት
+            </h3>
+            <h3 className="text-center font-bold text-2xl mb-8">
+              Remarks From Home — Room Teacher
+            </h3>
 
             {/* First Semester */}
-            <div className="mb-12">
-              <h4 className="font-semibold mb-4">1st Semester</h4>
-              <div className="space-y-1 mb-6">
+            <div className="mb-10">
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-bold">1ኛይ የአሸር ወቅት</span>
+              </div>
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-xl font-bold">1ኛው የትም/ወቅት</span>
+                <span className="flex-1 border-b border-black"></span>
+              </div>
+              <div className="text-xl font-bold mb-4">First Semester</div>
+              
+              <div className="space-y-1 mb-8">
                 {[1, 2, 3, 4, 5].map((i) => (
-                  <div key={i} className="border-b certificate-border border-opacity-40 h-6" />
+                  <div key={i} className="border-b border-black h-6 w-full" />
                 ))}
               </div>
-              <div className="grid grid-cols-2 gap-8">
-                <div>
-                  <p className="text-xs font-medium mb-2">Signature of Home-Room Teacher</p>
-                  <div className="border-b certificate-border h-8"></div>
+              
+              <div className="mb-4">
+                <div className="text-xl font-bold">
+                  የጎልጌይ ወሻይብ አሸርጌተ መልከት
                 </div>
-                <div>
-                  <p className="text-xs font-medium mb-2">Signature Of Parent or Guardian</p>
-                  <div className="border-b certificate-border h-8"></div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xl font-bold">የክፍሉ ኃላፊ መምህር ፊርማ</span>
+                  <span className="flex-1 border-b border-black"></span>
+                </div>
+                <div className="text-xl font-bold">
+                  Signature of Home-Room Teacher
+                </div>
+              </div>
+
+              <div>
+                <div className="text-xl font-bold">
+                  የወጄሎ ሀገጊና ያሌቂ መልከት
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xl font-bold">የወላጅ ወይም የአሳዳጊ ፊርማ</span>
+                  <span className="flex-1 border-b border-black"></span>
+                </div>
+                <div className="text-xl font-bold">
+                  Signature Of Parent or Guardian
                 </div>
               </div>
             </div>
 
             {/* Second Semester */}
             <div className="mt-auto">
-              <h4 className="font-semibold mb-4">2nd Semester</h4>
-              <div className="space-y-1 mb-6">
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-bold">2ኛይ የአሸር ወቅት</span>
+              </div>
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-xl font-bold">2ኛው የትም/ወቅት</span>
+                <span className="flex-1 border-b border-black"></span>
+                <span>:</span>
+                <span className="flex-1 border-b border-black"></span>
+              </div>
+              <div className="text-xl font-bold mb-4">Second Semester</div>
+              
+              <div className="space-y-1 mb-8">
                 {[1, 2, 3, 4, 5].map((i) => (
-                  <div key={i} className="border-b certificate-border border-opacity-40 h-6" />
+                  <div key={i} className="border-b border-black h-6 w-full" />
                 ))}
               </div>
-              <div className="grid grid-cols-2 gap-8">
-                <div>
-                  <p className="text-xs font-medium mb-2">Signature of Home-Room Teacher</p>
-                  <div className="border-b certificate-border h-8"></div>
+              
+              <div className="mb-4">
+                <div className="text-xl font-bold">
+                  የጎልጌይ ወሻይብ አሸርጌተ መልከት
                 </div>
-                <div>
-                  <p className="text-xs font-medium mb-2">Signature Of Parent or Guardian</p>
-                  <div className="border-b certificate-border h-8"></div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xl font-bold">የክፍሉ ኃላፊ መምህር ፊርማ</span>
+                  <span className="flex-1 border-b border-black"></span>
+                </div>
+                <div className="text-xl font-bold">
+                  Signature Of Home - Room Teacher
+                </div>
+              </div>
+
+              <div>
+                <div className="text-xl font-bold">
+                  የወላጅ ወይም የአሳዳጊ ፊርማ
+                </div>
+                <span className="flex-1 border-b border-black"></span>
+                <div className="text-xl font-bold">
+                  Signature Of Parent or Guardian
                 </div>
               </div>
             </div>

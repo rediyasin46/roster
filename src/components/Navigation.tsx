@@ -3,15 +3,16 @@ import { useState } from 'react';
 import { FileSpreadsheet, Trophy, Users, Award, Tag, Home, BarChart3, Menu, X } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useLanguage } from '@/context/LanguageContext';
 
-const navItems = [
-  { path: '/', icon: Home, label: 'Home' },
-  { path: '/assessments', icon: FileSpreadsheet, label: 'Assessments' },
-  { path: '/rank', icon: Trophy, label: 'Rank' },
-  { path: '/roster', icon: Users, label: 'Roster' },
-  { path: '/analysis', icon: BarChart3, label: 'Analysis' },
-  { path: '/certificate', icon: Award, label: 'Certificate' },
-  { path: '/pricing', icon: Tag, label: 'Pricing' },
+const navKeys = [
+  { path: '/',            icon: Home,          key: 'home' },
+  { path: '/assessments', icon: FileSpreadsheet, key: 'assessments' },
+  { path: '/rank',        icon: Trophy,        key: 'rank' },
+  { path: '/roster',      icon: Users,         key: 'roster' },
+  { path: '/analysis',    icon: BarChart3,     key: 'analysis' },
+  { path: '/certificate', icon: Award,         key: 'certificate' },
+  { path: '/pricing',     icon: Tag,           key: 'pricing' },
 ];
 
 export function Navigation() {
@@ -19,6 +20,13 @@ export function Navigation() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { t } = useLanguage();
+
+  const navItems = navKeys.map(({ path, icon, key }) => ({
+    path,
+    icon,
+    label: t(`nav.${key}`),
+  }));
 
   const handleNavigate = (path: string) => {
     navigate(path);

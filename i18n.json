@@ -1,0 +1,498 @@
+{
+  "_meta": {
+    "version": "1.0.0",
+    "activeLanguages": ["en", "am"],
+    "futureLanguages": ["om", "ti", "so", "si"],
+    "defaultLanguage": "en"
+  },
+  "en": {
+    "brand": {
+      "name": "Rosterbook",
+      "tagline": "Simplifying student performance management for Ethiopian teachers.",
+      "copyright": "© 2025 Rosterbook app. All rights reserved.",
+      "developer": "Developed by: Redi Yasin Umer"
+    },
+    "nav": {
+      "home": "Home",
+      "assessments": "Assessments",
+      "rank": "Rank",
+      "roster": "Roster",
+      "analysis": "Analysis",
+      "certificate": "Certificate",
+      "pricing": "Pricing"
+    },
+    "settings": {
+      "title": "Settings",
+      "language": "Language",
+      "theme": "Theme",
+      "light": "Light",
+      "dark": "Dark"
+    },
+    "hero": {
+      "badge": "Built for Ethiopian Teachers",
+      "headline": "Simplify Mark Entry:",
+      "marquee": "Ranking, Roster, Analysis and Certificate Generation.",
+      "description": "Rosterbook saves teachers hours of manual report card work — record marks, rank students, and print certificates in minutes.",
+      "ctaPrimary": "Get Started Free",
+      "ctaSecondary": "Sign In"
+    },
+    "highlights": {
+      "freeStudents": "Free for up to 30 Students",
+      "certificates": "Instant Certificate Generation",
+      "ranking": "Automatic Class Ranking",
+      "ethiopian": "Built for Ethiopian Schools"
+    },
+    "features": {
+      "sectionBadge": "Features",
+      "sectionTitle": "Everything You Need to Manage Student Performance",
+      "sectionDesc": "From mark entry to printed certificates — Rosterbook handles the full workflow.",
+      "markEntry": {
+        "title": "Easy Mark Entry",
+        "desc": "Excel-like inline editing with smart navigation. Enter marks fast, without modals."
+      },
+      "ranking": {
+        "title": "Automatic Ranking & Grading",
+        "desc": "Rankings and grade letters update instantly as you enter scores."
+      },
+      "certificates": {
+        "title": "Certificates & Report Cards",
+        "desc": "Generate professional, print-ready report cards and certificates in one click."
+      },
+      "plans": {
+        "title": "Flexible Subscription Plans",
+        "desc": "Free for small classes. Affordable monthly plans in Ethiopian Birr."
+      },
+      "cloud": {
+        "title": "Cloud-Based Access",
+        "desc": "Your data is safely stored in the cloud. Access from any device, anywhere."
+      },
+      "curriculum": {
+        "title": "Ethiopian Curriculum Ready",
+        "desc": "Designed around real Ethiopian school reporting needs and standards."
+      }
+    },
+    "howItWorks": {
+      "sectionBadge": "How It Works",
+      "sectionTitle": "Three Simple Steps",
+      "step1": { "title": "Sign Up", "desc": "Create your free account in seconds." },
+      "step2": { "title": "Enter Marks", "desc": "Add students and scores in a familiar spreadsheet view." },
+      "step3": { "title": "Generate Reports", "desc": "Download rankings, report cards, and certificates instantly." }
+    },
+    "demoTable": {
+      "rn": "RN",
+      "name": "Name",
+      "avg": "Avg",
+      "rank": "Rank",
+      "label": "Rosterbook · Grade 8A"
+    },
+    "pricing": {
+      "sectionBadge": "Pricing",
+      "sectionTitle": "Plans for Every Classroom",
+      "sectionDesc": "Pay in Ethiopian Birr. Cancel anytime.",
+      "viewFull": "View Full Pricing",
+      "badge": "Simple, transparent pricing",
+      "pageTitle": "Choose Your Plan",
+      "pageDesc": "All prices in Ethiopian Birr (ETB), billed monthly. Cancel or change plans anytime.",
+      "forTeachers": "For Teachers",
+      "forSchools": "For Schools",
+      "schoolDesc": "School-level plans cover multiple teachers and classes with centralized administration, role-based access, and school-wide analytics.",
+      "popular": "Most Popular",
+      "perMonth": "ETB/month",
+      "custom": "Custom",
+      "paymentNote": "Secure payment via Chapa — telebirr, CBE, Awash & all major Ethiopian banks supported.",
+      "faqTitle": "Frequently Asked Questions",
+      "faqDesc": "Everything you need to know about Rosterbook pricing.",
+      "plans": {
+        "starter": {
+          "name": "Starter", "tagline": "Free", "limit": "Up to 30 students", "cta": "Get Started",
+          "features": ["Basic mark entry", "Student ranking", "Simple report cards", "Certificate generation", "Custom branding", "Bulk export & analytics"]
+        },
+        "growth": {
+          "name": "Growth", "tagline": "Basic", "limit": "Up to 80 students", "cta": "Choose Growth",
+          "features": ["Everything in Starter", "Certificate generation", "Custom branding on report cards", "Email support", "Bulk export", "Advanced analytics"]
+        },
+        "professional": {
+          "name": "Professional", "tagline": "Pro", "limit": "Up to 150 students", "cta": "Choose Pro",
+          "features": ["Everything in Growth", "Bulk export to Excel/PDF", "Multiple class management", "Priority support", "Custom certificate templates"]
+        },
+        "premium": {
+          "name": "Premium", "tagline": "Best Value", "limit": "Up to 300 students", "cta": "Go Premium",
+          "features": ["Everything in Professional", "Advanced analytics dashboard", "Custom certificate templates", "PDF batch generation", "Dedicated account manager"]
+        },
+        "smallSchool": {
+          "name": "Small School", "tagline": "Up to 5 teachers", "limit": "Up to 500 students", "cta": "Start School Plan",
+          "features": ["5 teacher accounts", "Centralized administration", "All Growth features", "School-wide ranking"]
+        },
+        "mediumSchool": {
+          "name": "Medium School", "tagline": "Most schools choose this", "limit": "Up to 1,500 students", "cta": "Start School Plan",
+          "features": ["15 teacher accounts", "Admin controls & roles", "School-wide analytics dashboard", "All Professional features", "Priority email & chat support"]
+        },
+        "largeSchool": {
+          "name": "Large School", "tagline": "Enterprise", "limit": "Unlimited students & teachers", "cta": "Contact Sales",
+          "features": ["Unlimited teacher accounts", "Custom onboarding & training", "Dedicated success manager", "Custom integrations & SSO", "SLA & priority phone support"]
+        }
+      },
+      "faq": [
+        { "q": "Can I upgrade or downgrade anytime?", "a": "Yes. You can change your plan from your account at any time. Upgrades take effect immediately, and downgrades apply at the end of your current billing cycle." },
+        { "q": "What happens if I exceed my student limit?", "a": "You'll receive a notification when you approach your limit. You can continue viewing existing students, but adding new ones requires upgrading to a higher tier." },
+        { "q": "Is payment in Ethiopian Birr (ETB) only?", "a": "Yes. All plans are billed in ETB through Chapa, which supports telebirr, CBE, Awash, and major Ethiopian banks and cards." },
+        { "q": "Do you offer discounts for annual billing?", "a": "Annual billing offers up to 2 months free. Contact us for school-level annual pricing." },
+        { "q": "Is my student data secure?", "a": "Absolutely. All data is encrypted in transit and at rest, and stored securely in the cloud with role-based access control." }
+      ]
+    },
+    "testimonials": {
+      "sectionBadge": "Testimonials",
+      "sectionTitle": "Loved by Ethiopian Teachers",
+      "items": [
+        { "name": "Tigist Alemu", "school": "Addis Ababa Model School", "quote": "Rosterbook saved me 10+ hours every term. Report cards are now a 5-minute job." },
+        { "name": "Dawit Bekele", "school": "Hawassa Primary School", "quote": "The automatic ranking is incredibly accurate. My students love getting their certificates on time." },
+        { "name": "Hanna Tesfaye", "school": "Bahir Dar Academy", "quote": "Finally a tool built for Ethiopian teachers. Payment in Birr makes everything simple." }
+      ]
+    },
+    "cta": {
+      "title": "Start Saving Time on Report Cards Today",
+      "desc": "Join Ethiopian teachers using Rosterbook to grade smarter, not harder.",
+      "button": "Get Started Free"
+    },
+    "footer": {
+      "desc": "Simplifying student performance management for Ethiopian teachers.",
+      "product": "Product",
+      "company": "Company",
+      "follow": "Follow",
+      "links": {
+        "home": "Home", "pricing": "Pricing", "assessments": "Assessments", "certificates": "Certificates",
+        "about": "About", "contact": "Contact", "privacy": "Privacy"
+      }
+    },
+    "assessments": {
+      "pageTitle": "Continues Assessments",
+      "addStudent": "Add student info",
+      "addSubject": "Add Subject",
+      "exportExcel": "Export Excel",
+      "exportWord": "Export Word",
+      "print": "Print",
+      "subjectSemester": "Subject Semester:",
+      "display": "Display:",
+      "subject": "Subject:",
+      "subjects": "Subjects",
+      "manualEntry": "Manual Entry",
+      "importExcel": "Import Excel/CSV",
+      "addSubjectTitle": "Add Subject",
+      "subjectName": "Subject Name",
+      "subjectNamePlaceholder": "e.g., Amharic, Maths, Science",
+      "addStudentTitle": "Add Student Information",
+      "studentName": "Student Name",
+      "studentNamePlaceholder": "e.g., Abebe Kebede",
+      "importSuccessTitle": "Import Successful",
+      "importFailedTitle": "Import Failed",
+      "exportSuccess": "Data exported to Excel successfully.",
+      "selectFile": "Please select a file",
+      "selectSemester": "Select a semester",
+      "columns": {
+        "rn": "RN", "name": "Student Name", "sex": "Sex", "age": "Age",
+        "village": "Village", "kebele": "Kebele", "absent": "Absent",
+        "conduct": "Conduct", "remark": "Remark", "total": "Total", "average": "Average", "rank": "Rank"
+      }
+    },
+    "rank": {
+      "pageTitle": "Student Rank",
+      "showingScores": "Showing scores from Assessments —",
+      "noStudents": "No students yet. Add students in the Assessments page.",
+      "semesterBoth": "Average (1st & 2nd)",
+      "semesterLabel": "Semester",
+      "columns": {
+        "rn": "RN", "name": "Student Name", "total": "Total", "average": "Average", "rank": "Rank"
+      }
+    },
+    "analysis": {
+      "pageTitle": "Analysis",
+      "selectSubject": "Select Subject",
+      "noData": "No data available",
+      "stats": {
+        "totalStudents": "Total Students",
+        "classAverage": "Class Average",
+        "passRate": "Pass Rate",
+        "topScore": "Top Score",
+        "lowestScore": "Lowest Score"
+      },
+      "charts": {
+        "gradeDistribution": "Grade Distribution",
+        "subjectPerformance": "Subject Performance",
+        "performanceRadar": "Performance Radar",
+        "passFailDistribution": "Pass/Fail Distribution",
+        "genderPerformance": "Gender Performance",
+        "averageScore": "Average Score"
+      },
+      "topStudents": "Top 5 Students",
+      "bottomStudents": "Bottom 5 Students",
+      "tableColumns": {
+        "rank": "Rank", "name": "Name", "score": "Score"
+      },
+      "passed": "Passed",
+      "failed": "Failed"
+    },
+    "roster": {
+      "pageTitle": "Student Roster",
+      "noStudents": "No students yet. Add students in the Assessments page.",
+      "columns": {
+        "rn": "RN", "name": "Student Name", "semester": "Semester",
+        "total": "Total", "average": "Average", "rank": "Rank"
+      }
+    },
+    "actions": {
+      "importExcel": "Import Excel",
+      "exportExcel": "Export Excel",
+      "exportWord": "Export Word",
+      "print": "Print",
+      "getStarted": "Get Started",
+      "addStudent": "Add Student"
+    }
+  },
+  "am": {
+    "brand": {
+      "name": "ሮስተርቡክ",
+      "tagline": "ለኢትዮጵያ መምህራን የተማሪ ውጤት አስተዳደርን ቀላል ማድረግ።",
+      "copyright": "© 2025 ሮስተርቡክ አፕ። መብቱ በህግ የተጠበቀ ነው።",
+      "developer": "የተዘጋጀው በ፡ ረዲ ያሲን ኡመር"
+    },
+    "nav": {
+      "home": "ዋና ገጽ",
+      "assessments": "ምዘናዎች",
+      "rank": "ደረጃ",
+      "roster": "ዝርዝር",
+      "analysis": "ትንተና",
+      "certificate": "ሰርተፊኬት",
+      "pricing": "ዋጋ"
+    },
+    "settings": {
+      "title": "ቅንብሮች",
+      "language": "ቋንቋ",
+      "theme": "ገጽታ",
+      "light": "ብርሃን",
+      "dark": "ጨለማ"
+    },
+    "hero": {
+      "badge": "ለኢትዮጵያ መምህራን የተሰራ",
+      "headline": "ምዘና መዝገብን ቀላል አድርግ፡",
+      "marquee": "ደረጃ አሰጣጥ፣ ዝርዝር፣ ትንተና እና ሰርተፊኬት ማዘጋጀት።",
+      "description": "ሮስተርቡክ መምህራን ከሪፖርት ካርድ ስራ የሚያጠፉትን ሰዓት ይቆጥባል — ውጤቶችን ይመዝግቡ፣ ተማሪዎችን ደረጃ ያሰጡ፣ ሰርተፊኬቶችን ደቂቃዎች ውስጥ ያትሙ።",
+      "ctaPrimary": "በነፃ ጀምር",
+      "ctaSecondary": "ግባ"
+    },
+    "highlights": {
+      "freeStudents": "እስከ 30 ተማሪዎች ነፃ",
+      "certificates": "ፈጣን ሰርተፊኬት ማዘጋጀት",
+      "ranking": "ራስ-ሰር የክፍል ደረጃ አሰጣጥ",
+      "ethiopian": "ለኢትዮጵያ ትምህርት ቤቶች የተሰራ"
+    },
+    "features": {
+      "sectionBadge": "ባህሪያት",
+      "sectionTitle": "የተማሪ ውጤትን ለማስተዳደር የሚያስፈልግዎ ሁሉ",
+      "sectionDesc": "ከምዘና ማስገባት እስከ ሰርተፊኬት ማተም — ሮስተርቡክ ሙሉ ስርዓቱን ይቆጣጠራል።",
+      "markEntry": {
+        "title": "ቀላል ምዘና ማስገባት",
+        "desc": "እንደ ኤክሴል ያለ ቀጥታ ማስተካከያ በብልጥ አሰሳ። ምዘናዎችን በፍጥነት ያስገቡ።"
+      },
+      "ranking": {
+        "title": "ራስ-ሰር ደረጃ አሰጣጥ እና ደረጃ ፊደል",
+        "desc": "ውጤቶችን ሲያስገቡ ደረጃዎች እና የደረጃ ፊደሎች ወዲያውኑ ይዘምናሉ።"
+      },
+      "certificates": {
+        "title": "ሰርተፊኬቶች እና ሪፖርት ካርዶች",
+        "desc": "በአንድ ጠቅታ ሙያዊ፣ ለማተም ዝግጁ የሆኑ ሪፖርት ካርዶችን እና ሰርተፊኬቶችን ይፍጠሩ።"
+      },
+      "plans": {
+        "title": "ተለዋዋጭ የደንበኝነት ዕቅዶች",
+        "desc": "ለትንንሽ ክፍሎች ነፃ። በኢትዮጵያ ብር ተመጣጣኝ ወርሃዊ ዕቅዶች።"
+      },
+      "cloud": {
+        "title": "በደመና ላይ የተመሰረተ መዳረሻ",
+        "desc": "ውሂብዎ ደህና ሆኖ በደመና ላይ ተቀምጧል። ከማንኛውም መሳሪያ፣ ከማንኛውም ቦታ ይድረሱ።"
+      },
+      "curriculum": {
+        "title": "ለኢትዮጵያ ስርዓተ ትምህርት ዝግጁ",
+        "desc": "በእውነተኛ የኢትዮጵያ ትምህርት ቤት ሪፖርት አቀራረብ ፍላጎቶች እና ደረጃዎች ዙሪያ የተዘጋጀ።"
+      }
+    },
+    "howItWorks": {
+      "sectionBadge": "እንዴት ይሰራል",
+      "sectionTitle": "ሶስት ቀላል ደረጃዎች",
+      "step1": { "title": "ይመዝገቡ", "desc": "ነፃ አካውንትዎን በሰከንዶች ውስጥ ይፍጠሩ።" },
+      "step2": { "title": "ምዘናዎችን ያስገቡ", "desc": "ተማሪዎችን እና ውጤቶችን በ익숙 ስፕሬድሺት እይታ ያክሉ።" },
+      "step3": { "title": "ሪፖርቶችን ይፍጠሩ", "desc": "ደረጃዎችን፣ ሪፖርት ካርዶችን እና ሰርተፊኬቶችን ወዲያውኑ ያውርዱ።" }
+    },
+    "demoTable": {
+      "rn": "ተ.ቁ",
+      "name": "ስም",
+      "avg": "አማካኝ",
+      "rank": "ደረጃ",
+      "label": "ሮስተርቡክ · ክፍል 8ሀ"
+    },
+    "pricing": {
+      "sectionBadge": "ዋጋ",
+      "sectionTitle": "ለእያንዳንዱ ክፍል ዕቅዶች",
+      "sectionDesc": "በኢትዮጵያ ብር ይክፈሉ። በማንኛውም ጊዜ ይሰርዙ።",
+      "viewFull": "ሙሉ ዋጋ ይመልከቱ",
+      "badge": "ቀላል፣ ግልፅ ዋጋ",
+      "pageTitle": "ዕቅድዎን ይምረጡ",
+      "pageDesc": "ሁሉም ዋጋዎች በኢትዮጵያ ብር (ብር)፣ ወርሃዊ ክፍያ። በማንኛውም ጊዜ ይሰርዙ ወይም ዕቅድ ይቀይሩ።",
+      "forTeachers": "ለመምህራን",
+      "forSchools": "ለትምህርት ቤቶች",
+      "schoolDesc": "የትምህርት ቤት ደረጃ ዕቅዶች ብዙ መምህራንን እና ክፍሎችን በማዕከላዊ አስተዳደር፣ በሚና ላይ የተመሰረተ መዳረሻ እና በትምህርት ቤት ደረጃ ትንተና ይሸፍናሉ።",
+      "popular": "በጣም ታዋቂ",
+      "perMonth": "ብር/ወር",
+      "custom": "ብጁ",
+      "paymentNote": "ደህንነቱ የተጠበቀ ክፍያ በቻፓ — ቴሌብር፣ ሲቢኢ፣ አዋሽ እና ሁሉም ዋና ኢትዮጵያ ባንኮች ይደገፋሉ።",
+      "faqTitle": "ብዙ ጊዜ የሚጠየቁ ጥያቄዎች",
+      "faqDesc": "ስለ ሮስተርቡክ ዋጋ ማወቅ ያለብዎ ሁሉ።",
+      "plans": {
+        "starter": {
+          "name": "ጀማሪ", "tagline": "ነፃ", "limit": "እስከ 30 ተማሪዎች", "cta": "ጀምር",
+          "features": ["መሰረታዊ ምዘና ማስገባት", "የተማሪ ደረጃ አሰጣጥ", "ቀላል ሪፖርት ካርዶች", "ሰርተፊኬት ማዘጋጀት", "ብጁ ምልክት ማድረጊያ", "ጅምላ ወጪ እና ትንተና"]
+        },
+        "growth": {
+          "name": "እድገት", "tagline": "መሰረታዊ", "limit": "እስከ 80 ተማሪዎች", "cta": "እድገትን ምረጥ",
+          "features": ["ሁሉም በጀማሪ", "ሰርተፊኬት ማዘጋጀት", "በሪፖርት ካርዶች ላይ ብጁ ምልክት", "ኢሜይል ድጋፍ", "ጅምላ ወጪ", "የላቀ ትንተና"]
+        },
+        "professional": {
+          "name": "ፕሮፌሽናል", "tagline": "ፕሮ", "limit": "እስከ 150 ተማሪዎች", "cta": "ፕሮን ምረጥ",
+          "features": ["ሁሉም በእድገት", "ወደ ኤክሴል/ፒዲኤፍ ጅምላ ወጪ", "ብዙ ክፍሎች አስተዳደር", "ቅድሚያ ድጋፍ", "ብጁ ሰርተፊኬት አብነቶች"]
+        },
+        "premium": {
+          "name": "ፕሪሚየም", "tagline": "ምርጥ ዋጋ", "limit": "እስከ 300 ተማሪዎች", "cta": "ፕሪሚየም ይሁኑ",
+          "features": ["ሁሉም በፕሮፌሽናል", "የላቀ ትንተና ዳሽቦርድ", "ብጁ ሰርተፊኬት አብነቶች", "ፒዲኤፍ ጅምላ ማዘጋጀት", "ያደላደለ የአካውንት ሃላፊ"]
+        },
+        "smallSchool": {
+          "name": "ትንሽ ትምህርት ቤት", "tagline": "እስከ 5 መምህራን", "limit": "እስከ 500 ተማሪዎች", "cta": "የትምህርት ቤት ዕቅድ ጀምር",
+          "features": ["5 የመምህር አካውንቶች", "ማዕከላዊ አስተዳደር", "ሁሉም የእድገት ባህሪያት", "በትምህርት ቤት ደረጃ ደረጃ አሰጣጥ"]
+        },
+        "mediumSchool": {
+          "name": "መካከለኛ ትምህርት ቤት", "tagline": "አብዛኛዎቹ ትምህርት ቤቶች ይህን ይመርጣሉ", "limit": "እስከ 1,500 ተማሪዎች", "cta": "የትምህርት ቤት ዕቅድ ጀምር",
+          "features": ["15 የመምህር አካውንቶች", "የአስተዳዳሪ ቁጥጥሮች እና ሚናዎች", "በትምህርት ቤት ደረጃ ትንተና ዳሽቦርድ", "ሁሉም ፕሮፌሽናል ባህሪያት", "ቅድሚያ ኢሜይል እና ቻት ድጋፍ"]
+        },
+        "largeSchool": {
+          "name": "ትልቅ ትምህርት ቤት", "tagline": "ኢንተርፕራይዝ", "limit": "ያልተገደቡ ተማሪዎች እና መምህራን", "cta": "ሽያጭ ያነጋግሩ",
+          "features": ["ያልተገደቡ የመምህር አካውንቶች", "ብጁ ስልጠና እና ቅስቀሳ", "ያደላደለ የስኬት ሃላፊ", "ብጁ ውህደቶች እና SSO", "SLA እና ቅድሚያ የስልክ ድጋፍ"]
+        }
+      },
+      "faq": [
+        { "q": "በማንኛውም ጊዜ ማሻሻል ወይም ዝቅ ማድረግ እችላለሁ?", "a": "አዎ። ዕቅድዎን ከአካውንትዎ በማንኛውም ጊዜ መቀየር ይችላሉ። ማሻሻያዎች ወዲያውኑ ተፈፃሚ ይሆናሉ፣ ዝቅ ማድረጎች ደግሞ በአሁኑ የሂሳብ ዑደት መጨረሻ ላይ ይተገበራሉ።" },
+        { "q": "የተማሪ ገደቤን ካለፍኩ ምን ይሆናል?", "a": "ወደ ገደቡ ሲቃረቡ ማሳወቂያ ይደርስዎታል። ነባር ተማሪዎችን መመልከት ይቀጥሉ ይሆናል፣ ነገር ግን አዲሶችን ማከል ወደ ከፍተኛ ደረጃ ማሻሻልን ይጠይቃል።" },
+        { "q": "ክፍያ በኢትዮጵያ ብር (ብር) ብቻ ነው?", "a": "አዎ። ሁሉም ዕቅዶች በቻፓ በኩል በብር ይሸፍናሉ፣ ይህም ቴሌብር፣ ሲቢኢ፣ አዋሽ፣ እና ዋና ኢትዮጵያ ባንኮች እና ካርዶችን ይደግፋል።" },
+        { "q": "ለዓመታዊ ሂሳብ ቅናሾች ያቀርባሉ?", "a": "ዓመታዊ ሂሳብ እስከ 2 ወር ነፃ ያቀርባል። ለትምህርት ቤት ደረጃ ዓመታዊ ዋጋ ያነጋግሩን።" },
+        { "q": "የተማሪ ውሂቤ ደህና ነው?", "a": "በፍፁም። ሁሉም ውሂቦች በሽቦ እና ሲቀመጡ ምስጠራ የተደረጉ ናቸው፣ እና ደህና ሆኖ በደመና ላይ በሚና ላይ የተመሰረተ የመዳረሻ ቁጥጥር ተቀምጧል።" }
+      ]
+    },
+    "testimonials": {
+      "sectionBadge": "የምስክርነት ቃሎች",
+      "sectionTitle": "በኢትዮጵያ መምህራን የተወደደ",
+      "items": [
+        { "name": "ትግስት አለሙ", "school": "አዲስ አበባ ሞዴል ትምህርት ቤት", "quote": "ሮስተርቡክ በእያንዳንዱ ሴሚስተር ከ10 ሰዓት በላይ ቆጠበልኝ። ሪፖርት ካርዶች አሁን የ5 ደቂቃ ስራ ናቸው።" },
+        { "name": "ዳዊት በቀለ", "school": "ሀዋሳ አንደኛ ደረጃ ትምህርት ቤት", "quote": "ራስ-ሰር ደረጃ አሰጣጡ እጅግ ትክክለኛ ነው። ተማሪዎቼ ሰርተፊኬቶቻቸውን በጊዜ ማግኘትን ይወዳሉ።" },
+        { "name": "ሀና ተስፋዬ", "school": "ባሕር ዳር አካዳሚ", "quote": "በመጨረሻ ለኢትዮጵያ መምህራን የተሰራ መሳሪያ። ክፍያ በብር ሁሉንም ነገር ቀላል ያደርጋል።" }
+      ]
+    },
+    "cta": {
+      "title": "ዛሬ ሪፖርት ካርዶች ላይ ጊዜ መቆጠብ ይጀምሩ",
+      "desc": "ሮስተርቡክ ለሚጠቀሙ ኢትዮጵያ መምህራን ይቀላቀሉ — ብልጥ ሆነው ይደርጁ።",
+      "button": "በነፃ ጀምር"
+    },
+    "footer": {
+      "desc": "ለኢትዮጵያ መምህራን የተማሪ ውጤት አስተዳደርን ቀላል ማድረግ።",
+      "product": "ምርት",
+      "company": "ኩባንያ",
+      "follow": "ይከተሉ",
+      "links": {
+        "home": "ዋና ገጽ", "pricing": "ዋጋ", "assessments": "ምዘናዎች", "certificates": "ሰርተፊኬቶች",
+        "about": "ስለ እኛ", "contact": "አግኙን", "privacy": "ግላዊነት"
+      }
+    },
+    "assessments": {
+      "pageTitle": "ቀጣይ ምዘናዎች",
+      "addStudent": "የተማሪ መረጃ ጨምር",
+      "addSubject": "ትምህርት ጨምር",
+      "exportExcel": "ኤክሴል ወጪ",
+      "exportWord": "ዎርድ ወጪ",
+      "print": "አትም",
+      "subjectSemester": "የትምህርት ሴሚስተር፡",
+      "display": "አሳይ፡",
+      "subject": "ትምህርት፡",
+      "subjects": "ትምህርቶች",
+      "manualEntry": "በእጅ ማስገባት",
+      "importExcel": "ኤክሴል/ሲኤስቪ አስመጣ",
+      "addSubjectTitle": "ትምህርት ጨምር",
+      "subjectName": "የትምህርት ስም",
+      "subjectNamePlaceholder": "ለምሳሌ፡ አማርኛ፣ ሒሳብ፣ ሳይንስ",
+      "addStudentTitle": "የተማሪ መረጃ ጨምር",
+      "studentName": "የተማሪ ስም",
+      "studentNamePlaceholder": "ለምሳሌ፡ አበበ ከበደ",
+      "importSuccessTitle": "ማስመጣት ተሳክቷል",
+      "importFailedTitle": "ማስመጣት አልተሳካም",
+      "exportSuccess": "ውሂቡ ወደ ኤክሴል በተሳካ ሁኔታ ወጥቷል።",
+      "selectFile": "ፋይል ይምረጡ",
+      "selectSemester": "ሴሚስተር ይምረጡ",
+      "columns": {
+        "rn": "ተ.ቁ", "name": "የተማሪ ስም", "sex": "ጾታ", "age": "ዕድሜ",
+        "village": "መንደር", "kebele": "ቀበሌ", "absent": "ቀሪ",
+        "conduct": "ምግባር", "remark": "አስተያየት", "total": "ድምር", "average": "አማካኝ", "rank": "ደረጃ"
+      }
+    },
+    "rank": {
+      "pageTitle": "የተማሪ ደረጃ",
+      "showingScores": "ከምዘናዎች ውጤቶችን በማሳየት —",
+      "noStudents": "እስካሁን ተማሪዎች የሉም። ተማሪዎችን በምዘናዎች ገጽ ያክሉ።",
+      "semesterBoth": "አማካኝ (1ኛ እና 2ኛ)",
+      "semesterLabel": "ሴሚስተር",
+      "columns": {
+        "rn": "ተ.ቁ", "name": "የተማሪ ስም", "total": "ድምር", "average": "አማካኝ", "rank": "ደረጃ"
+      }
+    },
+    "analysis": {
+      "pageTitle": "ትንተና",
+      "selectSubject": "ትምህርት ይምረጡ",
+      "noData": "ምንም ውሂብ የለም",
+      "stats": {
+        "totalStudents": "ጠቅላላ ተማሪዎች",
+        "classAverage": "የክፍል አማካኝ",
+        "passRate": "የማለፍ ምጣኔ",
+        "topScore": "ከፍተኛ ውጤት",
+        "lowestScore": "ዝቅተኛ ውጤት"
+      },
+      "charts": {
+        "gradeDistribution": "የደረጃ ስርጭት",
+        "subjectPerformance": "የትምህርት አፈጻጸም",
+        "performanceRadar": "የአፈጻጸም ራዳር",
+        "passFailDistribution": "የማለፍ/አለፍ ስርጭት",
+        "genderPerformance": "የጾታ አፈጻጸም",
+        "averageScore": "አማካኝ ውጤት"
+      },
+      "topStudents": "ምርጥ 5 ተማሪዎች",
+      "bottomStudents": "ዝቅተኛ 5 ተማሪዎች",
+      "tableColumns": {
+        "rank": "ደረጃ", "name": "ስም", "score": "ውጤት"
+      },
+      "passed": "አለፉ",
+      "failed": "ወደቁ"
+    },
+    "roster": {
+      "pageTitle": "የተማሪ ዝርዝር",
+      "noStudents": "እስካሁን ተማሪዎች የሉም። ተማሪዎችን በምዘናዎች ገጽ ያክሉ።",
+      "columns": {
+        "rn": "ተ.ቁ", "name": "የተማሪ ስም", "semester": "ሴሚስተር",
+        "total": "ድምር", "average": "አማካኝ", "rank": "ደረጃ"
+      }
+    },
+    "actions": {
+      "importExcel": "ኤክሴል አስመጣ",
+      "exportExcel": "ኤክሴል ወጪ",
+      "exportWord": "ዎርድ ወጪ",
+      "print": "አትም",
+      "getStarted": "ጀምር",
+      "addStudent": "ተማሪ ጨምር"
+    }
+  },
+  "om": { "_status": "not_yet_translated", "brand": { "name": "Rosterbook" }, "nav": { "home": "Mana", "assessments": "Madaallii", "rank": "Sadarkaa", "roster": "Tarree", "analysis": "Xiinxala", "certificate": "Waraqaa ragaa", "pricing": "Gatii" } },
+  "ti": { "_status": "not_yet_translated", "brand": { "name": "Rosterbook" }, "nav": { "home": "መእተዊ", "assessments": "ምዘናታት", "rank": "ደርጃ", "roster": "ዝርዝር", "analysis": "ትንተና", "certificate": "ምስክር ወረቐት", "pricing": "ዋጋ" } },
+  "so": { "_status": "not_yet_translated", "brand": { "name": "Rosterbook" }, "nav": { "home": "Bogga hore", "assessments": "Qiimaynta", "rank": "Heerka", "roster": "Liiska", "analysis": "Falanqaynta", "certificate": "Shahaadada", "pricing": "Qiimaha" } },
+  "si": { "_status": "not_yet_translated", "brand": { "name": "Rosterbook" }, "nav": { "home": "Gede Bet", "assessments": "Mirkanaancho", "rank": "Saate", "roster": "Mira", "analysis": "Xiinxaala", "certificate": "Waraqe Malaatisancho", "pricing": "Umi" } }
+}

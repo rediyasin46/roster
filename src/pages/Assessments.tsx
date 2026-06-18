@@ -3,6 +3,7 @@ import { Plus, Trash2, Edit2, Upload, Printer, FileDown, X } from 'lucide-react'
 import * as XLSX from 'xlsx';
 import { useMarkbook } from '@/context/MarkbookContext';
 import { AppHeader } from '@/components/AppHeader';
+import { useLanguage } from '@/context/LanguageContext';
 import { SchoolInfoDialog, SchoolInfoSummary } from '@/components/SchoolInfoDialog';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
@@ -69,6 +70,7 @@ export default function Assessments() {
   const { state, dispatch } = useMarkbook();
   const { students, subjects, selectedSubjectId, isSeedData, schoolInfo, subjectSemesterView } = state;
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const sortedStudents = useMemo(() => sortStudentsByRn(students), [students]);
   
@@ -396,17 +398,17 @@ export default function Assessments() {
   const handleExportExcel = () => {
     const exportSemesters = getSemestersToShow(subjectSemesterView);
     const headerRow = [
-      'RN',
-      'Student Name',
-      'Sex',
-      'Age',
-      'Village',
-      'Kebele',
-      ...(showBothSemesters ? ['Semester'] : []),
+      t('assessments.columns.rn'),
+      t('assessments.columns.name'),
+      t('assessments.columns.sex'),
+      t('assessments.columns.age'),
+      t('assessments.columns.village'),
+      t('assessments.columns.kebele'),
+      ...(showBothSemesters ? ['Sem'] : []),
       ...subjects.map((s) => s.name),
-      'Absent',
-      'Conduct',
-      'Remark',
+      t('assessments.columns.absent'),
+      t('assessments.columns.conduct'),
+      t('assessments.columns.remark'),
     ];
 
     const ws_data = sortedStudents.flatMap((student) =>
@@ -440,16 +442,16 @@ export default function Assessments() {
     XLSX.writeFile(wb, `assessments_${Date.now()}.xlsx`);
 
     toast({
-      title: "Export Successful",
-      description: "Data exported to Excel successfully.",
+      title: t('assessments.exportSuccess'),
+      description: t('assessments.exportSuccess'),
     });
   };
 
   const handlePrint = () => {
     window.print();
     toast({
-      title: "Print",
-      description: "Opening print dialog...",
+      title: t('assessments.print'),
+      description: 'Opening print dialog...',
     });
   };
 
@@ -460,7 +462,7 @@ export default function Assessments() {
 
       <div className="p-6 space-y-6">
         {/* Page Title */}
-        <h2 className="text-2xl font-semibold text-primary">Continues Assessments</h2>
+        <h2 className="text-2xl font-semibold text-primary">{t('assessments.pageTitle')}</h2>
 
         {/* School Info */}
         <SchoolInfoSummary onEdit={() => setIsSchoolInfoOpen(true)} />
@@ -473,7 +475,7 @@ export default function Assessments() {
             className="bg-cyan-500 hover:bg-cyan-600 text-white gap-2"
           >
             <Plus className="w-4 h-4" />
-            Add student info
+            {t('assessments.addStudent')}
           </Button>
           <Button 
             onClick={() => {
@@ -485,34 +487,34 @@ export default function Assessments() {
             className="bg-cyan-500 hover:bg-cyan-600 text-white gap-2"
           >
             <Plus className="w-4 h-4" />
-            Add Subject
+            {t('assessments.addSubject')}
           </Button>
           <Button 
             onClick={handleExportExcel}
             className="bg-yellow-500 hover:bg-yellow-600 text-white gap-2"
           >
             <FileDown className="w-4 h-4" />
-            Export Excel
+            {t('assessments.exportExcel')}
           </Button>
           <Button 
             className="bg-yellow-500 hover:bg-yellow-600 text-white gap-2"
           >
             <FileDown className="w-4 h-4" />
-            Export Word
+            {t('assessments.exportWord')}
           </Button>
           <Button 
             onClick={handlePrint}
             className="bg-yellow-500 hover:bg-yellow-600 text-white gap-2"
           >
             <Printer className="w-4 h-4" />
-            Print
+            {t('assessments.print')}
           </Button>
         </div>
 
         {/* Display, Subject Filters, and Subject Semester Buttons */}
         <div className="flex flex-wrap items-center gap-6">
           <div className="flex items-center gap-3">
-            <span className="text-sm font-medium">Subject Semester:</span>
+            <span className="text-sm font-medium">{t('assessments.subjectSemester')}</span>
             <div className="inline-flex rounded-md border border-gray-300 dark:border-slate-600 overflow-hidden">
               {SUBJECT_SEMESTER_OPTIONS.map(({ value, label }) => (
                 <button
@@ -535,7 +537,7 @@ export default function Assessments() {
           </div>
 
           <div className="flex items-center gap-3">
-            <span className="text-sm font-medium">Display:</span>
+            <span className="text-sm font-medium">{t('assessments.display')}</span>
             <Select>
               <SelectTrigger className="w-40">
                 <SelectValue defaultValue="Total(100%)" />
@@ -547,7 +549,7 @@ export default function Assessments() {
           </div>
 
           <div className="flex items-center gap-3">
-            <span className="text-sm font-medium">Subject:</span>
+            <span className="text-sm font-medium">{t('assessments.subject')}</span>
             <Select value={selectedSubjectId || ''} onValueChange={(value) => {
               dispatch({ type: 'SET_SELECTED_SUBJECT', payload: value });
             }}>
@@ -569,7 +571,7 @@ export default function Assessments() {
         {subjects.length > 0 && (
           <div className="space-y-3">
             <h3 className="text-sm font-semibold text-primary">
-              Subjects ({subjects.length})
+              {t('assessments.subjects')} ({subjects.length})
             </h3>
             <div className="flex flex-wrap gap-2">
               {subjects.map(subject => (
@@ -620,7 +622,7 @@ export default function Assessments() {
         }}>
           <DialogContent className="bg-card max-w-2xl">
             <DialogHeader className="flex flex-row items-center justify-between pr-2">
-              <DialogTitle>Add Subject</DialogTitle>
+              <DialogTitle>{t('assessments.addSubjectTitle')}</DialogTitle>
               <button
                 type="button"
                 onClick={() => {
@@ -637,18 +639,18 @@ export default function Assessments() {
 
             <Tabs value={importMode} onValueChange={(value) => setImportMode(value as 'single' | 'multiple')} className="w-full">
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="single">Manual Entry</TabsTrigger>
-                <TabsTrigger value="multiple">Import Excel/CSV</TabsTrigger>
+                <TabsTrigger value="single">{t('assessments.manualEntry')}</TabsTrigger>
+                <TabsTrigger value="multiple">{t('assessments.importExcel')}</TabsTrigger>
               </TabsList>
 
               {/* Tab 1: Manual Entry */}
               <TabsContent value="single" className="space-y-4 mt-4">
                 <div>
                   <label className="text-sm font-semibold text-foreground block mb-2">
-                    Subject Name *
+                    {t('assessments.subjectName')} *
                   </label>
                   <Input
-                    placeholder="e.g., Amharic, Maths, Science"
+                    placeholder={t('assessments.subjectNamePlaceholder')}
                     value={newSubjectName}
                     onChange={(e) => setNewSubjectName(e.target.value)}
                     onKeyDown={(e) => {
@@ -666,7 +668,7 @@ export default function Assessments() {
                   onClick={handleAddSubjectManual}
                   className="w-full bg-cyan-500 hover:bg-cyan-600 text-white gap-2"
                 >
-                  Add Subject
+                  {t('assessments.addSubject')}
                 </Button>
               </TabsContent>
 
@@ -674,7 +676,7 @@ export default function Assessments() {
               <TabsContent value="multiple" className="space-y-4 mt-4">
                 <div>
                   <label className="text-sm font-semibold text-foreground block mb-2">
-                    Subject Name (optional)
+                    {t('assessments.subjectName')} (optional)
                   </label>
                   <Input
                     placeholder="Leave blank to use subject names from file columns"
@@ -726,7 +728,7 @@ export default function Assessments() {
                   className="w-full bg-cyan-500 hover:bg-cyan-600 text-white gap-2"
                 >
                   <Upload className="w-4 h-4" />
-                  {selectedImportFile ? 'Import Excel/CSV' : 'Select & Import Excel/CSV'}
+                  {selectedImportFile ? t('assessments.importExcel') : t('assessments.importExcel')}
                 </Button>
               </TabsContent>
             </Tabs>
@@ -744,7 +746,7 @@ export default function Assessments() {
         }}>
           <DialogContent className="bg-card max-w-2xl">
             <DialogHeader className="flex flex-row items-center justify-between pr-2">
-              <DialogTitle>Add Student Information</DialogTitle>
+              <DialogTitle>{t('assessments.addStudentTitle')}</DialogTitle>
               <button
                 type="button"
                 onClick={() => {
@@ -761,18 +763,18 @@ export default function Assessments() {
 
             <Tabs value={studentImportMode} onValueChange={(value) => setStudentImportMode(value as 'single' | 'multiple')} className="w-full">
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="single">Manual Entry</TabsTrigger>
-                <TabsTrigger value="multiple">Import Excel/CSV</TabsTrigger>
+                <TabsTrigger value="single">{t('assessments.manualEntry')}</TabsTrigger>
+                <TabsTrigger value="multiple">{t('assessments.importExcel')}</TabsTrigger>
               </TabsList>
 
               {/* Tab 1: Manual Entry */}
               <TabsContent value="single" className="space-y-4 mt-4">
                 <div>
                   <label className="text-sm font-semibold text-foreground block mb-2">
-                    Student Name *
+                    {t('assessments.studentName')} *
                   </label>
                   <Input
-                    placeholder="e.g., Abebe Kebede"
+                    placeholder={t('assessments.studentNamePlaceholder')}
                     value={newStudent.name}
                     onChange={(e) => setNewStudent({ ...newStudent, name: e.target.value })}
                     onKeyDown={(e) => {
@@ -791,7 +793,7 @@ export default function Assessments() {
                   className="w-full bg-cyan-500 hover:bg-cyan-600 text-white gap-2"
                 >
                   <Plus className="w-4 h-4" />
-                  Add Student
+                  {t('actions.addStudent')}
                 </Button>
               </TabsContent>
 
@@ -851,22 +853,22 @@ export default function Assessments() {
           <table className="w-full">
             <thead className="bg-blue-600 dark:bg-blue-800 text-white">
               <tr>
-                <th className="px-4 py-3 text-left font-semibold">RN</th>
-                <th className="px-4 py-3 text-left font-semibold">Student Name</th>
-                <th className="px-4 py-3 text-left font-semibold">Sex</th>
-                <th className="px-4 py-3 text-left font-semibold">Age</th>
-                <th className="px-4 py-3 text-left font-semibold">Village</th>
-                <th className="px-4 py-3 text-left font-semibold">Kebele</th>
+                <th className="px-4 py-3 text-left font-semibold">{t('assessments.columns.rn')}</th>
+                <th className="px-4 py-3 text-left font-semibold">{t('assessments.columns.name')}</th>
+                <th className="px-4 py-3 text-left font-semibold">{t('assessments.columns.sex')}</th>
+                <th className="px-4 py-3 text-left font-semibold">{t('assessments.columns.age')}</th>
+                <th className="px-4 py-3 text-left font-semibold">{t('assessments.columns.village')}</th>
+                <th className="px-4 py-3 text-left font-semibold">{t('assessments.columns.kebele')}</th>
                 {showBothSemesters && (
                   <th className="px-2 py-3 text-center font-semibold text-xs w-12">Sem</th>
                 )}
                 {subjects.map(subject => (
                   <th key={subject.id} className="px-4 py-3 text-left font-semibold text-xs">{subject.name}</th>
                 ))}
-                <th className="px-4 py-3 text-left font-semibold">Absent</th>
-                <th className="px-4 py-3 text-left font-semibold">Conduct</th>
-                <th className="px-4 py-3 text-left font-semibold">Remark</th>
-                <th className="px-4 py-3 text-left font-semibold">Action</th>
+                <th className="px-4 py-3 text-left font-semibold">{t('assessments.columns.absent')}</th>
+                <th className="px-4 py-3 text-left font-semibold">{t('assessments.columns.conduct')}</th>
+                <th className="px-4 py-3 text-left font-semibold">{t('assessments.columns.remark')}</th>
+                <th className="px-4 py-3 text-left font-semibold">·</th>
               </tr>
             </thead>
             <tbody>

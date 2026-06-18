@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { useMarkbook } from '@/context/MarkbookContext';
 import { AppHeader } from '@/components/AppHeader';
 import { Card } from '@/components/ui/card';
+import { useLanguage } from '@/context/LanguageContext';
 import {
   Select,
   SelectContent,
@@ -43,6 +44,7 @@ import {
 export default function Analysis() {
   const { state, getStudentTotal, getOverallTotal } = useMarkbook();
   const { students, subjects, assessments, schoolInfo } = state;
+  const { t } = useLanguage();
   const [selectedSubject, setSelectedSubject] = useState<string | null>(
     subjects.length > 0 ? subjects[0].id : null
   );
@@ -145,9 +147,9 @@ export default function Analysis() {
 
   // Pass/Fail data
   const passFailData = useMemo(() => [
-    { name: 'Passed', value: stats.passCount, fill: '#10b981' },
-    { name: 'Failed', value: stats.failCount, fill: '#ef4444' },
-  ], [stats]);
+    { name: t('analysis.passed'), value: stats.passCount, fill: '#10b981' },
+    { name: t('analysis.failed'), value: stats.failCount, fill: '#ef4444' },
+  ], [stats, t]);
 
   // Gender breakdown
   const genderBreakdown = useMemo(() => {
@@ -185,7 +187,7 @@ export default function Analysis() {
         <div className="flex gap-4 items-end">
           <div className="flex-1">
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-              Select Subject
+              {t('analysis.selectSubject')}
             </label>
             <Select value={selectedSubject || ''} onValueChange={setSelectedSubject}>
               <SelectTrigger className="w-full">
@@ -207,7 +209,7 @@ export default function Analysis() {
           <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-900/40 rounded-3xl shadow-sm p-6 border border-blue-200 dark:border-blue-700/50 hover:shadow-lg transition-all">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-blue-700 dark:text-blue-300">Total Students</p>
+                <p className="text-sm font-medium text-blue-700 dark:text-blue-300">{t('analysis.stats.totalStudents')}</p>
                 <p className="text-2xl font-bold text-blue-900 dark:text-blue-100 mt-2">{stats.totalStudents}</p>
               </div>
               <div className="bg-blue-200 dark:bg-blue-800 p-4 rounded-full">
@@ -219,7 +221,7 @@ export default function Analysis() {
           <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-900/20 dark:to-indigo-900/40 rounded-3xl shadow-sm p-6 border border-indigo-200 dark:border-indigo-700/50 hover:shadow-lg transition-all">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-indigo-700 dark:text-indigo-300">Class Average</p>
+                <p className="text-sm font-medium text-indigo-700 dark:text-indigo-300">{t('analysis.stats.classAverage')}</p>
                 <p className="text-2xl font-bold text-indigo-900 dark:text-indigo-100 mt-2">{stats.classAverage.toFixed(1)}</p>
               </div>
               <div className="bg-indigo-200 dark:bg-indigo-800 p-4 rounded-full">
@@ -231,7 +233,7 @@ export default function Analysis() {
           <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-900/40 rounded-3xl shadow-sm p-6 border border-green-200 dark:border-green-700/50 hover:shadow-lg transition-all">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-green-700 dark:text-green-300">Pass Rate</p>
+                <p className="text-sm font-medium text-green-700 dark:text-green-300">{t('analysis.stats.passRate')}</p>
                 <p className="text-2xl font-bold text-green-900 dark:text-green-100 mt-2">{stats.passRate.toFixed(1)}%</p>
               </div>
               <div className="bg-green-200 dark:bg-green-800 p-4 rounded-full">
@@ -243,7 +245,7 @@ export default function Analysis() {
           <div className="bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-900/40 rounded-3xl shadow-sm p-6 border border-amber-200 dark:border-amber-700/50 hover:shadow-lg transition-all">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-amber-700 dark:text-amber-300">Top Score</p>
+                <p className="text-sm font-medium text-amber-700 dark:text-amber-300">{t('analysis.stats.topScore')}</p>
                 <p className="text-2xl font-bold text-amber-900 dark:text-amber-100 mt-2">{stats.topScore.toFixed(0)}</p>
               </div>
               <div className="bg-amber-200 dark:bg-amber-800 p-4 rounded-full">
@@ -255,7 +257,7 @@ export default function Analysis() {
           <div className="bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-900/40 rounded-3xl shadow-sm p-6 border border-red-200 dark:border-red-700/50 hover:shadow-lg transition-all">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-red-700 dark:text-red-300">Lowest Score</p>
+                <p className="text-sm font-medium text-red-700 dark:text-red-300">{t('analysis.stats.lowestScore')}</p>
                 <p className="text-2xl font-bold text-red-900 dark:text-red-100 mt-2">{stats.lowestScore.toFixed(0)}</p>
               </div>
               <div className="bg-red-200 dark:bg-red-800 p-4 rounded-full">
@@ -269,7 +271,7 @@ export default function Analysis() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Grade Distribution */}
           <Card className="bg-white dark:bg-slate-800 p-6 shadow-sm border-slate-200 dark:border-slate-700">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">Grade Distribution</h2>
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">{t('analysis.charts.gradeDistribution')}</h2>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={gradeDistribution}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
@@ -291,7 +293,7 @@ export default function Analysis() {
 
           {/* Subject-wise Performance */}
           <Card className="bg-white dark:bg-slate-800 p-6 shadow-sm border-slate-200 dark:border-slate-700">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">Subject Performance</h2>
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">{t('analysis.charts.subjectPerformance')}</h2>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={subjectPerformance}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
@@ -314,14 +316,14 @@ export default function Analysis() {
           {/* Performance Radar */}
           {subjectPerformance.length > 2 && (
             <Card className="bg-white dark:bg-slate-800 p-6 shadow-sm border-slate-200 dark:border-slate-700">
-              <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">Performance Radar</h2>
+              <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">{t('analysis.charts.performanceRadar')}</h2>
               <ResponsiveContainer width="100%" height={300}>
                 <RadarChart data={subjectPerformance}>
                   <PolarGrid stroke="#e2e8f0" />
                   <PolarAngleAxis dataKey="name" stroke="#6b7280" />
                   <PolarRadiusAxis stroke="#6b7280" />
                   <Radar
-                    name="Average Score"
+                    name={t('analysis.charts.averageScore')}
                     dataKey="average"
                     stroke="#ec4899"
                     fill="#ec4899"
@@ -343,7 +345,7 @@ export default function Analysis() {
 
           {/* Pass/Fail Distribution */}
           <Card className="bg-white dark:bg-slate-800 p-6 shadow-sm border-slate-200 dark:border-slate-700">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">Pass/Fail Distribution</h2>
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">{t('analysis.charts.passFailDistribution')}</h2>
             {stats.passCount + stats.failCount > 0 ? (
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
@@ -376,7 +378,7 @@ export default function Analysis() {
               </ResponsiveContainer>
             ) : (
               <div className="h-[300px] flex items-center justify-center text-slate-500 dark:text-slate-400">
-                No data available
+                {t('analysis.noData')}
               </div>
             )}
           </Card>
@@ -384,7 +386,7 @@ export default function Analysis() {
           {/* Gender Breakdown */}
           {genderBreakdown.length > 0 && (
             <Card className="bg-white dark:bg-slate-800 p-6 shadow-sm border-slate-200 dark:border-slate-700">
-              <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">Gender Performance</h2>
+              <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">{t('analysis.charts.genderPerformance')}</h2>
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={genderBreakdown}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
@@ -400,7 +402,7 @@ export default function Analysis() {
                     labelStyle={{ color: '#f3f4f6' }}
                   />
                   <Legend />
-                  <Bar dataKey="average" fill="#06b6d4" name="Average Score" radius={[8, 8, 0, 0]} />
+                  <Bar dataKey="average" fill="#06b6d4" name={t('analysis.charts.averageScore')} radius={[8, 8, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </Card>
@@ -413,15 +415,15 @@ export default function Analysis() {
           <Card className="bg-white dark:bg-slate-800 p-6 shadow-sm border-slate-200 dark:border-slate-700">
             <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
               <TrendingUp className="w-5 h-5 text-green-600" />
-              Top 5 Students
+              {t('analysis.topStudents')}
             </h2>
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-slate-200 dark:border-slate-700">
-                    <th className="text-left py-3 px-4 text-sm font-semibold text-slate-700 dark:text-slate-300">Rank</th>
-                    <th className="text-left py-3 px-4 text-sm font-semibold text-slate-700 dark:text-slate-300">Name</th>
-                    <th className="text-right py-3 px-4 text-sm font-semibold text-slate-700 dark:text-slate-300">Score</th>
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-slate-700 dark:text-slate-300">{t('analysis.tableColumns.rank')}</th>
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-slate-700 dark:text-slate-300">{t('analysis.tableColumns.name')}</th>
+                    <th className="text-right py-3 px-4 text-sm font-semibold text-slate-700 dark:text-slate-300">{t('analysis.tableColumns.score')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -448,15 +450,15 @@ export default function Analysis() {
           <Card className="bg-white dark:bg-slate-800 p-6 shadow-sm border-slate-200 dark:border-slate-700">
             <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
               <TrendingDown className="w-5 h-5 text-red-600" />
-              Bottom 5 Students
+              {t('analysis.bottomStudents')}
             </h2>
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-slate-200 dark:border-slate-700">
-                    <th className="text-left py-3 px-4 text-sm font-semibold text-slate-700 dark:text-slate-300">Rank</th>
-                    <th className="text-left py-3 px-4 text-sm font-semibold text-slate-700 dark:text-slate-300">Name</th>
-                    <th className="text-right py-3 px-4 text-sm font-semibold text-slate-700 dark:text-slate-300">Score</th>
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-slate-700 dark:text-slate-300">{t('analysis.tableColumns.rank')}</th>
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-slate-700 dark:text-slate-300">{t('analysis.tableColumns.name')}</th>
+                    <th className="text-right py-3 px-4 text-sm font-semibold text-slate-700 dark:text-slate-300">{t('analysis.tableColumns.score')}</th>
                   </tr>
                 </thead>
                 <tbody>

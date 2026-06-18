@@ -2,6 +2,7 @@ import { Fragment } from 'react';
 import { useMarkbook } from '@/context/MarkbookContext';
 import { AppHeader } from '@/components/AppHeader';
 import { ActionButtons } from '@/components/ActionButtons';
+import { useLanguage } from '@/context/LanguageContext';
 import { getSemesterSubjectScores } from '@/utils/semesterScores';
 
 export default function Roster() {
@@ -13,6 +14,7 @@ export default function Roster() {
     getSemestersWithData,
   } = useMarkbook();
   const { students, subjects, assessments } = state;
+  const { t } = useLanguage();
 
   const semesters = getSemestersWithData();
   const showAverageRow = semesters.length > 1;
@@ -26,7 +28,6 @@ export default function Roster() {
           student.id,
           semester
         );
-
         return {
           semester,
           subjectScores,
@@ -94,26 +95,21 @@ export default function Roster() {
   };
 
   const tableHeaders = [
-    'RN',
-    'Student Name',
-    'Semester',
+    t('roster.columns.rn'),
+    t('roster.columns.name'),
+    t('roster.columns.semester'),
     ...subjects.map((s) => s.name),
-    'Total',
-    'Average',
-    'Rank',
+    t('roster.columns.total'),
+    t('roster.columns.average'),
+    t('roster.columns.rank'),
   ];
-
-  const formatSemesterLabel = (semester: string) => {
-    if (semester === 'average') return 'average';
-    return semester;
-  };
 
   return (
     <div className="min-h-screen bg-background">
       <AppHeader />
 
       <div className="p-4 space-y-4">
-        <h2 className="text-xl font-semibold text-primary">Student Roster</h2>
+        <h2 className="text-xl font-semibold text-primary">{t('roster.pageTitle')}</h2>
 
         <ActionButtons
           tableData={getTableData()}
@@ -125,17 +121,17 @@ export default function Roster() {
           <table className="markbook-table">
             <thead>
               <tr>
-                <th>RN</th>
-                <th>Student Name</th>
-                <th>Semester</th>
+                <th>{t('roster.columns.rn')}</th>
+                <th>{t('roster.columns.name')}</th>
+                <th>{t('roster.columns.semester')}</th>
                 {subjects.map((subject) => (
                   <th key={subject.id} className="bg-[hsl(210,100%,70%)]">
                     {subject.name}
                   </th>
                 ))}
-                <th className="bg-[hsl(var(--table-calculated))]">Total</th>
-                <th className="bg-[hsl(45,100%,70%)] text-foreground">Average</th>
-                <th className="bg-[hsl(var(--table-calculated))]">Rank</th>
+                <th className="bg-[hsl(var(--table-calculated))]">{t('roster.columns.total')}</th>
+                <th className="bg-[hsl(45,100%,70%)] text-foreground">{t('roster.columns.average')}</th>
+                <th className="bg-[hsl(var(--table-calculated))]">{t('roster.columns.rank')}</th>
               </tr>
             </thead>
             <tbody>
@@ -163,12 +159,8 @@ export default function Roster() {
                             </td>
                           </>
                         )}
-                        <td
-                          className={
-                            semData.semester === 'average' ? 'font-medium italic' : ''
-                          }
-                        >
-                          {formatSemesterLabel(semData.semester)}
+                        <td className={semData.semester === 'average' ? 'font-medium italic' : ''}>
+                          {semData.semester}
                         </td>
                         {subjects.map((subject) => (
                           <td key={subject.id}>
@@ -193,7 +185,7 @@ export default function Roster() {
 
         {students.length === 0 && (
           <div className="text-center py-8 text-muted-foreground">
-            <p>No students yet. Add students in the Assessments page.</p>
+            <p>{t('roster.noStudents')}</p>
           </div>
         )}
       </div>

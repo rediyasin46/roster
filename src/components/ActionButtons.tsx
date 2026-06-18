@@ -3,6 +3,7 @@ import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { Document, Packer, Table, TableRow, TableCell, Paragraph, WidthType, BorderStyle } from 'docx';
 import { useRef } from 'react';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface ActionButtonsProps {
   showImport?: boolean;
@@ -20,6 +21,7 @@ export function ActionButtons({
   fileName 
 }: ActionButtonsProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { t } = useLanguage();
 
   const handleImportClick = () => {
     fileInputRef.current?.click();
@@ -116,23 +118,23 @@ export function ActionButtons({
       {showImport && (
         <button onClick={handleImportClick} className="btn-action btn-import flex items-center gap-2">
           <Upload className="w-4 h-4" />
-          Import Excel
+          {t('actions.importExcel')}
         </button>
       )}
       
       <button onClick={exportToExcel} className="btn-action btn-export flex items-center gap-2">
         <Download className="w-4 h-4" />
-        Export Excel
+        {t('actions.exportExcel')}
       </button>
       
       <button onClick={exportToWord} className="btn-action btn-export flex items-center gap-2">
         <FileText className="w-4 h-4" />
-        Export Word
+        {t('actions.exportWord')}
       </button>
       
       <button onClick={handlePrint} className="btn-action bg-muted text-foreground hover:opacity-90 flex items-center gap-2">
         <Printer className="w-4 h-4" />
-        Print
+        {t('actions.print')}
       </button>
       
       

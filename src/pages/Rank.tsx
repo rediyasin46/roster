@@ -1,6 +1,7 @@
 import { useMarkbook } from '@/context/MarkbookContext';
 import { AppHeader } from '@/components/AppHeader';
 import { ActionButtons } from '@/components/ActionButtons';
+import { useLanguage } from '@/context/LanguageContext';
 import { RankData } from '@/types/markbook';
 
 export default function Rank() {
@@ -12,11 +13,12 @@ export default function Rank() {
     getOverallRank,
   } = useMarkbook();
   const { students, subjects, subjectSemesterView } = state;
+  const { t } = useLanguage();
 
   const semesterLabel =
     subjectSemesterView === 'both'
-      ? 'Average (1st & 2nd)'
-      : `${subjectSemesterView} Semester`;
+      ? t('rank.semesterBoth')
+      : `${subjectSemesterView} ${t('rank.semesterLabel')}`;
 
   const rankData: RankData[] = students.map((student) => {
     const subjectScores: { [subjectId: string]: number } = {};
@@ -49,12 +51,12 @@ export default function Rank() {
   };
 
   const tableHeaders = [
-    'RN',
-    'Student Name',
+    t('rank.columns.rn'),
+    t('rank.columns.name'),
     ...subjects.map((s) => s.name),
-    'Total',
-    'Average',
-    'Rank',
+    t('rank.columns.total'),
+    t('rank.columns.average'),
+    t('rank.columns.rank'),
   ];
 
   return (
@@ -63,9 +65,9 @@ export default function Rank() {
 
       <div className="p-4 space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="text-xl font-semibold text-primary">Student Rank</h2>
+          <h2 className="text-xl font-semibold text-primary">{t('rank.pageTitle')}</h2>
           <p className="text-sm text-muted-foreground">
-            Showing scores from Assessments — {semesterLabel}
+            {t('rank.showingScores')} {semesterLabel}
           </p>
         </div>
 
@@ -79,16 +81,16 @@ export default function Rank() {
           <table className="markbook-table">
             <thead>
               <tr>
-                <th>RN</th>
-                <th>Student Name</th>
+                <th>{t('rank.columns.rn')}</th>
+                <th>{t('rank.columns.name')}</th>
                 {subjects.map((subject) => (
                   <th key={subject.id} className="bg-[hsl(142,70%,45%)]">
                     {subject.name}
                   </th>
                 ))}
-                <th className="bg-[hsl(var(--table-calculated))]">Total</th>
-                <th className="bg-[hsl(45,100%,70%)] text-foreground">Average</th>
-                <th className="bg-[hsl(var(--table-calculated))]">Rank</th>
+                <th className="bg-[hsl(var(--table-calculated))]">{t('rank.columns.total')}</th>
+                <th className="bg-[hsl(45,100%,70%)] text-foreground">{t('rank.columns.average')}</th>
+                <th className="bg-[hsl(var(--table-calculated))]">{t('rank.columns.rank')}</th>
               </tr>
             </thead>
             <tbody>
@@ -112,7 +114,7 @@ export default function Rank() {
 
         {students.length === 0 && (
           <div className="text-center py-8 text-muted-foreground">
-            <p>No students yet. Add students in the Assessments page.</p>
+            <p>{t('rank.noStudents')}</p>
           </div>
         )}
       </div>
